@@ -1607,3 +1607,208 @@ body {
   color: var(--honey-gold);
   border-color: rgba(229, 178, 93, 0.3);
 }
+
+/* --- PREMIUM MOBILE OPTIMIZATIONS --- */
+@media (max-width: 768px) {
+  /* Layout Padding & Spacing */
+  .main-content {
+    padding: 20px 16px;
+    gap: 20px;
+  }
+  
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 16px;
+  }
+  
+  .project-title h1 {
+    font-size: 22px;
+  }
+  
+  /* Sidebar responsive swipable list */
+  .sidebar {
+    padding: 20px 16px;
+    gap: 20px;
+  }
+  
+  .brand-section {
+    padding-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: left;
+  }
+  
+  .logo-container-card {
+    width: 64px;
+    height: 64px;
+    padding: 6px;
+    margin: 0;
+  }
+  
+  .brand-subtitle {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  
+  .sidebar-quote {
+    display: none; /* Hide quotes to save vertical space on mobile */
+  }
+  
+  .product-list {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .product-item {
+    min-width: 210px;
+    padding: 10px 12px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    border-radius: var(--border-radius-sm);
+  }
+  
+  /* Global Stats mobile grid */
+  .global-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .stat-badge {
+    min-width: 0;
+    padding: 8px 12px;
+    gap: 8px;
+    border-radius: var(--border-radius-sm);
+  }
+  
+  .stat-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .stat-val {
+    font-size: 16px;
+  }
+  
+  .stat-label {
+    font-size: 9px;
+  }
+  
+  .stat-badge:last-child {
+    grid-column: span 2;
+    justify-content: center;
+  }
+
+  /* Inline Deadline picker spacing */
+  .project-deadline-widget {
+    width: 100%;
+    margin-top: 8px;
+    box-sizing: border-box;
+    justify-content: space-between;
+  }
+
+  /* App Pills Navigation Mobile optimization (2x2 grid for mobile) */
+  .tabs-navigation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    border-radius: var(--border-radius-md);
+    padding: 4px;
+    gap: 6px;
+  }
+  
+  .tab-btn {
+    padding: 10px;
+    font-size: 12px;
+    border-radius: 8px;
+    justify-content: center;
+    gap: 6px;
+  }
+  
+  /* Checklist containers mobile min width */
+  .checklist-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .dept-card {
+    padding: 18px;
+    border-radius: var(--border-radius-md);
+  }
+
+  /* Trello Kanban Swipable Mobile view */
+  .kanban-board {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 16px;
+    padding: 4px 4px 16px 4px;
+    margin-left: -16px;
+    width: calc(100% + 32px);
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .kanban-column {
+    flex: 0 0 82vw;
+    scroll-snap-align: center;
+    max-height: calc(100vh - 360px);
+    border-radius: var(--border-radius-md);
+    padding: 14px;
+  }
+
+  /* Login Card Mobile responsive spacing */
+  .login-card {
+    padding: 24px;
+    width: 100%;
+    max-width: 360px;
+  }
+  
+  .login-logo-img {
+    max-width: 90px;
+  }
+  
+  /* SVG Report layout stacking */
+  .report-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .report-summary-card {
+    padding: 20px;
+    border-radius: var(--border-radius-md);
+  }
+  
+  .report-card {
+    padding: 18px;
+    border-radius: var(--border-radius-md);
+  }
+  
+  /* Chart labels responsive sizing */
+  .chart-bar-item {
+    grid-template-columns: 1fr auto;
+    gap: 6px;
+  }
+  
+  .chart-track {
+    grid-column: span 2;
+    margin-bottom: 4px;
+  }
+  
+  .chart-label {
+    font-size: 12px;
+  }
+  
+  .chart-value {
+    font-size: 11px;
+    text-align: right;
+  }
+}
