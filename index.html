@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Phần mềm quản lý chiến dịch hè của Quán của Thời Thanh Xuân - Theo dõi tiến độ công việc, sơ đồ Trello kéo thả, checklist phòng ban.">
+  <title>Campaign Tracking & Report - Quán của Thời Thanh Xuân</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- SVG Gradient definition for Circular Progress Ring -->
+  <svg style="width:0; height:0; position:absolute;" aria-hidden="true">
+    <defs>
+      <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#e5b25d" />
+        <stop offset="100%" stop-color="#ca6a4b" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- Login Container -->
+  <div id="login-screen" class="login-overlay">
+    <div class="login-card">
+      <div class="logo-container-card">
+        <img src="logo.png" alt="Thời Thanh Xuân Logo" class="brand-logo-img">
+      </div>
+      <div class="login-subtitle">CAMPAIGN TRACKING & REPORT - DỰ ÁN HÈ 2026</div>
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-username">Tên đăng nhập</label>
+          <input type="text" id="login-username" required placeholder="Nhập tên đăng nhập..." class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Mật khẩu</label>
+          <input type="password" id="login-password" required placeholder="Nhập mật khẩu..." class="form-input">
+        </div>
+        <div id="login-error-msg" class="login-error" style="display: none;">Tên đăng nhập hoặc mật khẩu không đúng!</div>
+        <button type="submit" class="primary-btn login-btn">Đăng nhập vào hệ thống</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="app-container" id="app-container" style="display: none;">
+    
+    <!-- Left Sidebar: Brand & Product Showcase -->
+    <aside class="sidebar">
+      <div class="brand-section">
+        <div class="logo-container-card">
+          <img src="logo.png" alt="Thời Thanh Xuân Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-subtitle">Campaign Tracking & Report</div>
+      </div>
+
+      <div class="sidebar-quote">
+        "Nơi những người đặc biệt làm ra những điều đặc biệt"
+      </div>
+
+      <!-- Product Showcase / Filtering Section -->
+      <div class="product-showcase">
+        <h3 class="section-title">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m0 3a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m0-6a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M5 4.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0 3a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0 3a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5"/>
+          </svg>
+          Sản phẩm & Dịch vụ Hè
+        </h3>
+        <div class="product-list">
+          <div class="product-item active" data-filter="all">
+            <div class="product-name">Tất cả sản phẩm</div>
+            <div class="product-desc">Hiển thị mọi công việc của dự án hè.</div>
+          </div>
+          
+          <div class="product-item ws-theme" data-filter="ws">
+            <div class="product-name">Combo Workshop & Nước</div>
+            <div class="product-desc">Workshop làm xà phòng thảo mộc, nến thơm và nước uống tự chọn.</div>
+          </div>
+          
+          <div class="product-item e50-theme" data-filter="e50">
+            <div class="product-name">Nước hoa Elixir 50ml</div>
+            <div class="product-desc">BST Elixir đậm đặc hương gỗ thông: "Đà Lạt bên hiên nhà".</div>
+          </div>
+          
+          <div class="product-item edp30-theme" data-filter="edp30">
+            <div class="product-name">Nước hoa EDP 30ml</div>
+            <div class="product-desc">Mùi hương: "Đà Lạt hiên nhà. Xuân hạ thu đông, rồi lại Xuân".</div>
+          </div>
+          
+          <div class="product-item tea-theme" data-filter="tea">
+            <div class="product-name">Các Loại Trà Thảo Mộc</div>
+            <div class="product-desc">Bộ trà hảo hạng gồm: Trà oolong mật, trà xuân và bột trà matcha.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <button id="btn-logout" class="secondary-btn" style="width: 100%; font-size:12px; margin-bottom:6px; display:flex; align-items:center; justify-content:center; gap:8px; border-color: rgba(202, 106, 75, 0.4); color: var(--terracotta); border-radius: 30px; padding: 8px 16px; cursor: pointer; transition: all 0.3s;">
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
+            <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+          </svg>
+          Đăng xuất
+        </button>
+        <div class="author-info">
+          <span>Quản lý dự án mùa Hè 2026</span>
+          <span style="opacity: 0.6;">Phiên bản 1.0.0 (Dalat Vibe)</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main class="main-content">
+      
+      <!-- Top Dashboard Header -->
+      <header class="app-header">
+        <div class="project-title">
+          <h1>Campaign Tracking & Report</h1>
+          <p>Hệ thống lập kế hoạch và báo cáo tiến độ các ban Quán của Thời Thanh Xuân</p>
+          <div class="project-deadline-widget">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-top: -2px;">
+              <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+              <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+            </svg>
+            <span>Hạn chót dự án:</span>
+            <input type="date" id="project-deadline" class="deadline-date-picker">
+            <span id="deadline-countdown" class="deadline-countdown-badge">-- ngày</span>
+          </div>
+        </div>
+
+        <!-- Global Progress Badges -->
+        <div class="global-stats">
+          <div class="stat-badge">
+            <div class="stat-icon">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
+                <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8m0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5"/>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-val" id="stat-total-val">0</span>
+              <span class="stat-label">Tổng công việc</span>
+            </div>
+          </div>
+
+          <div class="stat-badge">
+            <div class="stat-icon">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41z"/>
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="M8 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10m0 1a6 6 0 1 0 0-12 6 6 0 0 0 0 12"/>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-val" id="stat-progress-val">0</span>
+              <span class="stat-label">Đang triển khai</span>
+            </div>
+          </div>
+
+          <div class="stat-badge">
+            <div class="stat-icon">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-val" id="stat-completion-val">0%</span>
+              <span class="stat-label">Độ hoàn thành</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Navigation Tabs bar -->
+      <nav class="tabs-navigation">
+        <button class="tab-btn active" data-tab="checklist">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M12.448 12.448a.5.5 0 0 1-.707 0L9.366 10.07a.5.5 0 0 1 0-.708L11.74 6.98a.5.5 0 1 1 .707.708l-2.02 2.02 2.02 2.02a.5.5 0 0 1 0 .708Z"/>
+            <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5z"/>
+          </svg>
+          Checklist Phòng Ban
+        </button>
+        <button class="tab-btn" data-tab="kanban">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2.5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zh11ZM1 2a1 1 0 0 1 1-1h3v14H2a1 1 0 0 1-1-1zm5 0h4v14H6zm5 0h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-3z"/>
+          </svg>
+          Bảng Kanban (Trello)
+        </button>
+        <button class="tab-btn" data-tab="report">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.707l-5.354 5.353a.5.5 0 0 1-.708 0L5 7.707l-4.146 4.147a.5.5 0 0 1-.708-.708l4.5-4.5a.5.5 0 0 1 .708 0L8 8.793l4.646-4.647H10.5a.5.5 0 0 1-.5-.5"/>
+          </svg>
+          Báo Cáo Tiến Độ
+        </button>
+        <button class="tab-btn" data-tab="timeline">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+          </svg>
+          Sơ Đồ Timeline
+        </button>
+      </nav>
+
+      <!-- TAB 1 PANEL: CHECKLIST -->
+      <section class="tab-content-panel active" id="checklist-tab-panel">
+        <div class="checklist-container" id="checklist-container-div">
+          <!-- Dynamically populated by JS (grouped by departments) -->
+        </div>
+      </section>
+
+      <!-- TAB 2 PANEL: KANBAN -->
+      <section class="tab-content-panel" id="kanban-tab-panel">
+        
+        <!-- Board Filtering and Add button Controls -->
+        <div class="kanban-controls">
+          <div class="kanban-filters">
+            <select class="filter-select" id="filter-dept">
+              <option value="all">Tất cả Phòng Ban</option>
+              <option value="Sản xuất">Ban Sản xuất</option>
+              <option value="Truyền thông & MKT">Ban Truyền thông & MKT</option>
+              <option value="Vận hành & Thiết kế">Ban Vận hành & Thiết kế</option>
+              <option value="Nhân sự">Ban Nhân sự</option>
+            </select>
+
+            <select class="filter-select" id="filter-product">
+              <option value="all">Tất cả Sản phẩm</option>
+              <option value="ws">Combo Workshop & Nước</option>
+              <option value="e50">Nước hoa Elixir 50ml</option>
+              <option value="edp30">Nước hoa EDP 30ml</option>
+              <option value="tea">Các Loại Trà Thảo Mộc</option>
+            </select>
+          </div>
+
+          <button class="primary-btn" id="btn-add-task">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+            </svg>
+            Tạo công việc
+          </button>
+        </div>
+
+        <!-- Kanban Board Columns -->
+        <div class="kanban-board">
+          
+          <!-- Column 1: To Do -->
+          <div class="kanban-column" id="col-todo">
+            <div class="column-header">
+              <h3 class="column-title">
+                <span class="column-dot dot-todo"></span>
+                Cần làm
+              </h3>
+              <span class="column-count" id="count-todo">0</span>
+            </div>
+            <div class="column-cards-container" id="col-todo-cards">
+              <!-- Cards dynamically inserted -->
+            </div>
+          </div>
+
+          <!-- Column 2: In Progress -->
+          <div class="kanban-column" id="col-progress">
+            <div class="column-header">
+              <h3 class="column-title">
+                <span class="column-dot dot-progress"></span>
+                Đang làm
+              </h3>
+              <span class="column-count" id="count-in-progress">0</span>
+            </div>
+            <div class="column-cards-container" id="col-progress-cards">
+              <!-- Cards dynamically inserted -->
+            </div>
+          </div>
+
+          <!-- Column 3: Review -->
+          <div class="kanban-column" id="col-review">
+            <div class="column-header">
+              <h3 class="column-title">
+                <span class="column-dot dot-review"></span>
+                Kiểm duyệt
+              </h3>
+              <span class="column-count" id="count-review">0</span>
+            </div>
+            <div class="column-cards-container" id="col-review-cards">
+              <!-- Cards dynamically inserted -->
+            </div>
+          </div>
+
+          <!-- Column 4: Done -->
+          <div class="kanban-column" id="col-done">
+            <div class="column-header">
+              <h3 class="column-title">
+                <span class="column-dot dot-done"></span>
+                Hoàn thành
+              </h3>
+              <span class="column-count" id="count-done">0</span>
+            </div>
+            <div class="column-cards-container" id="col-done-cards">
+              <!-- Cards dynamically inserted -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 3 PANEL: REPORT -->
+      <section class="tab-content-panel" id="report-tab-panel">
+        <div class="report-grid">
+          
+          <!-- Left: Circular Completion & Numeric breakdown -->
+          <div class="report-summary-card">
+            <h3 class="section-title">Tiến độ tổng thể</h3>
+            
+            <div class="progress-ring-container">
+              <svg width="180" height="180">
+                <circle class="progress-ring-circle-bg" cx="90" cy="90" r="80" />
+                <circle class="progress-ring-circle" id="progress-ring-circle-element" cx="90" cy="90" r="80" />
+              </svg>
+              <div class="progress-percentage">
+                <span class="progress-pct-val" id="report-pct-text">0%</span>
+                <span class="progress-pct-lbl">Hoàn tất</span>
+              </div>
+            </div>
+
+            <div class="summary-stats-details">
+              <div class="summary-stat-row">
+                <span>
+                  <span class="column-dot dot-todo" style="display:inline-block; margin-top:2px;"></span>
+                  Cần làm:
+                </span>
+                <strong id="lbl-report-todo">0</strong>
+              </div>
+              <div class="summary-stat-row">
+                <span>
+                  <span class="column-dot dot-progress" style="display:inline-block; margin-top:2px;"></span>
+                  Đang làm:
+                </span>
+                <strong id="lbl-report-progress">0</strong>
+              </div>
+              <div class="summary-stat-row">
+                <span>
+                  <span class="column-dot dot-review" style="display:inline-block; margin-top:2px;"></span>
+                  Kiểm duyệt:
+                </span>
+                <strong id="lbl-report-review">0</strong>
+              </div>
+              <div class="summary-stat-row">
+                <span>
+                  <span class="column-dot dot-done" style="display:inline-block; margin-top:2px;"></span>
+                  Hoàn thành:
+                </span>
+                <strong id="lbl-report-done">0</strong>
+              </div>
+              <div class="summary-stat-row" style="border-top:1px dashed var(--glass-border); padding-top:8px; margin-top:4px;">
+                <span>Tổng số việc:</span>
+                <strong id="lbl-report-total">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Detailed charts and Activity logs -->
+          <div class="report-details-panel">
+            
+            <!-- Dept Completion chart -->
+            <div class="report-card">
+              <h3 class="section-title">Tiến độ theo Phòng Ban</h3>
+              <div class="chart-container horizontal-bar-chart" id="chart-dept-container">
+                <!-- Bars dynamic -->
+              </div>
+            </div>
+
+            <!-- Product distribution chart -->
+            <div class="report-card">
+              <h3 class="section-title">Phân bổ theo Dòng Sản Phẩm</h3>
+              <div class="chart-container horizontal-bar-chart" id="chart-product-container">
+                <!-- Bars dynamic -->
+              </div>
+            </div>
+
+            <!-- Recent Activity list -->
+            <div class="report-card">
+              <h3 class="section-title">Nhật ký hoạt động gần đây</h3>
+              <div class="activity-list" id="activity-list-container">
+                <!-- Logs dynamic -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4 PANEL: TIMELINE -->
+      <section class="tab-content-panel" id="timeline-tab-panel">
+        <div class="timeline-header-controls" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <p style="font-size:14px; color:var(--text-muted);">Sơ đồ tiến độ lộ trình Chiến dịch mùa Hè 2026 (10/06 - 15/08) được chia theo 4 giai đoạn chính.</p>
+        </div>
+        <div class="timeline-vertical-path" id="timeline-path-container">
+          <!-- Dynamically populated by JS -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Create/Edit Task Modal Overlay -->
+  <div class="modal-overlay" id="task-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Thêm Công Việc Mới</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="task-form">
+        
+        <div class="form-group">
+          <label class="form-label" for="task-title">Tên công việc</label>
+          <input type="text" id="task-title" required placeholder="Nhập tên việc cần làm..." class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="task-desc">Mô tả công việc</label>
+          <textarea id="task-desc" placeholder="Mô tả chi tiết nội dung đầu việc..." class="form-textarea"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="task-dept">Phòng ban phụ trách</label>
+            <select id="task-dept" class="form-select">
+              <option value="Sản xuất">Ban Sản xuất</option>
+              <option value="Truyền thông & MKT">Ban Truyền thông & MKT</option>
+              <option value="Vận hành & Thiết kế">Ban Vận hành & Thiết kế</option>
+              <option value="Nhân sự">Ban Nhân sự</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="task-product">Sản phẩm liên quan</label>
+            <select id="task-product" class="form-select">
+              <option value="ws">Combo Workshop & Nước</option>
+              <option value="e50">Nước hoa Elixir 50ml</option>
+              <option value="edp30">Nước hoa EDP 30ml</option>
+              <option value="tea">Các Loại Trà Thảo Mộc</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="task-priority">Độ ưu tiên</label>
+            <select id="task-priority" class="form-select">
+              <option value="low">Thấp</option>
+              <option value="medium" selected>Trung bình</option>
+              <option value="high">Khẩn cấp (Cao)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="task-status">Trạng thái ban đầu</label>
+            <select id="task-status" class="form-select">
+              <option value="todo">Cần làm</option>
+              <option value="in-progress">Đang làm</option>
+              <option value="review">Kiểm duyệt</option>
+              <option value="done">Hoàn thành</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="secondary-btn" id="btn-cancel-task">Hủy bỏ</button>
+          <button type="submit" class="primary-btn" style="box-shadow: none;">Lưu công việc</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
