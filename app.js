@@ -18,420 +18,273 @@ const PRODUCT_INFO = {
 
 // Department Options
 const DEPARTMENTS = [
-  'Sản xuất',
-  'Truyền thông & MKT',
-  'Vận hành & Thiết kế',
-  'Nhân sự'
+  'Bán hàng',
+  'Kinh doanh',
+  'Pha chế',
+  'Vấn đề chung',
+  'Truyền thông & MKT'
 ];
 
 // Initial default data if LocalStorage is empty
 const defaultTasks = [
   {
-    id: 't1',
-    title: "Chiết rót & dán nhãn nước hoa Elixir 50ml 'Đà Lạt bên hiên nhà'",
-    desc: "Chiết rót mẻ nước hoa Elixir 50ml đầu tiên phục vụ chiến dịch hè, số lượng chỉ tiêu 100 chai. Đảm bảo vệ sinh phòng đóng chai.",
-    dept: "Sản xuất",
+    id: "duy1",
+    title: "Workshop nước hoa",
+    desc: "Setup, tạo quy trình, vận hành",
+    dept: "Bán hàng",
     status: "todo",
-    product: "e50",
-    priority: "high",
-    createdAt: Date.now() - 86400000 * 3
-  },
-  {
-    id: 't2',
-    title: "Thiết kế poster & brochure cho Combo Workshop pha trà vẽ cốc",
-    desc: "Thiết kế ấn phẩm truyền thông mang phong cách mộc mạc của quán. Chuẩn bị file in ấn trước ngày 25/6.",
-    dept: "Truyền thông & MKT",
-    status: "in-progress",
     product: "ws",
-    priority: "medium",
+    priority: "high",
+    owner: "Nguyễn Trọng Duy",
+    supporter: "Thuỳ Dương",
+    startDate: "19/06/2026",
+    endDate: "30/06/2026",
     createdAt: Date.now() - 86400000 * 2
   },
   {
-    id: 't3',
-    title: "Chuẩn bị hoa khô & tinh dầu thơm cho khu vực Workshop",
-    desc: "Thu gom hoa cẩm tú cầu, hoa hồng khô, và sắp xếp dụng cụ làm nến thơm/xà phòng tại căn nhà gỗ phía sau quán.",
-    dept: "Vận hành & Thiết kế",
-    status: "review",
+    id: "duy2",
+    title: "Xử lý thủ tục đối soát hàng hoá Thời Thanh Xuân và 12 Trương Công Định",
+    desc: "Thực hiện đối soát số lượng và doanh thu hàng hoá giữa các chi nhánh.",
+    dept: "Kinh doanh",
+    status: "todo",
     product: "ws",
-    priority: "low",
+    priority: "high",
+    owner: "Nguyễn Trọng Duy",
+    supporter: "",
+    startDate: "19/06/2026",
+    endDate: "20/06/2026",
+    createdAt: Date.now() - 86400000 * 2
+  },
+  {
+    id: "duy3",
+    title: "Chương trình bán hàng tháng 7/2026",
+    desc: "Lên kế hoạch và triển khai chương trình ưu đãi bán hàng cho tháng 7.",
+    dept: "Bán hàng",
+    status: "todo",
+    product: "ws",
+    priority: "medium",
+    owner: "Nguyễn Trọng Duy",
+    supporter: "Thuỳ Dương",
+    startDate: "20/06/2026",
+    endDate: "25/06/2026",
     createdAt: Date.now() - 86400000 * 1
   },
   {
-    id: 't4',
-    title: "Nhập trà oolong mật, trà xuân và matcha từ xưởng Bảo Lộc",
-    desc: "Kiểm tra chất lượng đóng gói và bảo quản hút chân không. Sắp xếp lên kệ trưng bày phía trước quầy bar.",
-    dept: "Sản xuất",
-    status: "done",
+    id: "duy4",
+    title: "Lên kế hoạch kinh doanh offline xử lý tồn kho 3 mã sản phẩm: Lá bạc, Trà, Nước hoa Đà Lạt bên hiên nhà",
+    desc: "Tập trung giải phóng hàng tồn kho cho 3 sản phẩm chủ lực qua kênh trực tiếp.",
+    dept: "Bán hàng",
+    status: "todo",
     product: "tea",
     priority: "high",
-    createdAt: Date.now() - 86400000 * 4
+    owner: "Nguyễn Trọng Duy",
+    supporter: "Thuỳ Dương",
+    startDate: "20/06/2026",
+    endDate: "21/06/2026",
+    createdAt: Date.now() - 86400000 * 1
   },
   {
-    id: 't5',
-    title: "Viết bài truyền thông giới thiệu BST nước hoa EDP 'Xuân, hạ, thu, đông, rồi lại Xuân'",
-    desc: "Bài viết đính kèm hình ảnh mô tả nốt hương nhẹ nhàng của hoa hồng Đà Lạt, gỗ thông sương sớm qua đóng lá.",
-    dept: "Truyền thông & MKT",
-    status: "todo",
-    product: "edp30",
-    priority: "medium",
-    createdAt: Date.now() - 43200000
-  },
-  {
-    id: 't6',
-    title: "Tập huấn ngôn ngữ ký hiệu chủ đề Hè cho các bạn khiếm thính",
-    desc: "Hướng dẫn các bạn pha chế và phục vụ quầy cách giới thiệu Combo Workshop và các loại trà mới bằng cử chỉ ấm áp.",
-    dept: "Nhân sự",
-    status: "in-progress",
-    product: "tea",
-    priority: "high",
-    createdAt: Date.now() - 86400000 * 1.5
-  },
-  {
-    id: 't7',
-    title: "Thiết lập file Google Sheets theo dõi doanh thu chiến dịch Hè",
-    desc: "Tách biệt doanh thu từ Combo Workshop, nước hoa Elixir, nước hoa EDP và trà tại quầy để báo cáo vào cuối tuần.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "ws",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't8',
-    title: "Chụp ảnh lookbook nước hoa Elixir 50ml tại góc cửa sổ ngập nắng",
-    desc: "Chụp ảnh sản phẩm với ánh nắng dịu buổi sáng Đà Lạt, kết hợp phụ kiện gỗ, hoa thông và ly trà xuân mộc mạc.",
-    dept: "Truyền thông & MKT",
-    status: "done",
-    product: "e50",
-    priority: "low",
-    createdAt: Date.now() - 86400000 * 5
-  },
-  {
-    id: 't9',
-    title: "Kiểm tra chất lượng bao bì & đầu xịt chai thủy tinh EDP 30ml",
-    desc: "Đảm bảo chai nước hoa vòi xịt đều mịn, không bị rò rỉ khi di chuyển đường dài cho khách đặt ship.",
-    dept: "Sản xuất",
-    status: "review",
-    product: "edp30",
-    priority: "high",
-    createdAt: Date.now() - 12000000
-  },
-  {
-    id: 't10',
-    title: "Thiết kế Form đăng ký & Landing Page giới thiệu Combo Workshop",
-    desc: "Tạo biểu mẫu thu thập thông tin và trang giới thiệu trải nghiệm làm workshop tại quán.",
-    dept: "Truyền thông & MKT",
-    status: "done",
-    product: "ws",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't11',
-    title: "Đăng bài truyền thông giới thiệu và link đăng ký Workshop lên Fanpage",
-    desc: "Lên bài viết kèm hình ảnh không gian thơ mộng của quán để thu hút khách đăng ký đặt trước.",
-    dept: "Truyền thông & MKT",
+    id: "duy5",
+    title: "Điều chỉnh mã hàng kiotviet cho toàn hệ thống: Thời Thanh Xuân, 12 Trương Công Định",
+    desc: "Cập nhật và chuẩn hoá mã vạch, thông tin sản phẩm trên phần mềm KiotViet.",
+    dept: "Bán hàng",
     status: "todo",
     product: "ws",
     priority: "high",
+    owner: "Nguyễn Trọng Duy",
+    supporter: "",
+    startDate: "21/06/2026",
+    endDate: "21/06/2026",
     createdAt: Date.now()
   },
   {
-    id: 't12',
-    title: "Gửi email xác nhận đặt chỗ thành công cho khách hàng",
-    desc: "Xác nhận thời gian, số lượng người tham gia và gửi hướng dẫn đường đi, chuẩn bị trước khi đến quán.",
+    id: "duy6",
+    title: "Tuyển dụng đủ: 3 nhân sự bán hàng, 1 nhân sự workshop nước hoa, 1 nhân sự vệ sinh",
+    desc: "Lên tin tuyển dụng, phỏng vấn và tiếp nhận nhân sự mới phục vụ mùa hè.",
+    dept: "Vấn đề chung",
+    status: "todo",
+    product: "ws",
+    priority: "high",
+    owner: "Nguyễn Trọng Duy",
+    supporter: "Nguyễn Hoàng Phi",
+    startDate: "21/06/2026",
+    endDate: "25/06/2026",
+    createdAt: Date.now()
+  },
+  {
+    id: "duy7",
+    title: "Ra mắt món bánh mới",
+    desc: "Hoàn thiện công thức, chuẩn bị nguyên liệu và chạy thử món bánh mới tại quầy bar.",
+    dept: "Pha chế",
+    status: "todo",
+    product: "tea",
+    priority: "high",
+    owner: "Nguyễn Trọng Duy",
+    supporter: "Thuỳ Dương",
+    startDate: "22/06/2026",
+    endDate: "23/06/2026",
+    createdAt: Date.now()
+  },
+  {
+    id: "duy8",
+    title: "Bắt đầu kế hoạch kinh doanh offline xử lý tồn kho 3 mã sản phẩm: Lá bạc, Trà, Nước hoa Đà Lạt bên hiên nhà",
+    desc: "Chính thức triển khai bán hàng offline, đẩy mạnh tiếp thị trực tiếp tại quán.",
+    dept: "Bán hàng",
+    status: "todo",
+    product: "tea",
+    priority: "high",
+    owner: "Nguyễn Trọng Duy",
+    supporter: "Thuỳ Dương",
+    startDate: "22/06/2026",
+    endDate: "30/06/2026",
+    createdAt: Date.now()
+  },
+  // Marketing Team Tasks
+  {
+    id: "mkt1",
+    title: "Content Giới Thiệu Give Me A Little Time",
+    desc: "Số lượng: 5 bài content giới thiệu chương trình ý nghĩa Give Me A Little Time.",
     dept: "Truyền thông & MKT",
     status: "todo",
     product: "ws",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't13',
-    title: "Dọn dẹp và trang trí không gian khu vực làm Workshop tại quán",
-    desc: "Bố trí bàn ghế gỗ, cắm hoa cẩm tú cầu tươi, sắp xếp ánh sáng vàng ấm cúng mang phong cách Đà Lạt.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "ws",
     priority: "high",
-    createdAt: Date.now()
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "20/06/2026",
+    endDate: "25/06/2026",
+    createdAt: Date.now() - 86400000 * 1
   },
   {
-    id: 't14',
-    title: "Chuẩn bị nguyên liệu và dụng cụ làm nến thơm/xà phòng thảo mộc",
-    desc: "Chuẩn bị khuôn, cốc đo, sáp nến, bấc nến, thảo mộc khô Đà Lạt và tinh dầu thiên nhiên.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "ws",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't15',
-    title: "Chuẩn bị menu nước uống bất kỳ phục vụ kèm tại quầy",
-    desc: "Đảm bảo nguyên liệu trà oolong mật, trà xuân và matcha luôn sẵn sàng phục vụ khi khách làm workshop.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "ws",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't16',
-    title: "In ấn bảng hướng dẫn các bước làm Workshop tại bàn",
-    desc: "Thiết kế bảng hướng dẫn ngắn gọn bằng hình ảnh/chữ để khách hàng (đặc biệt là khách khiếm thính dễ theo dõi).",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "ws",
-    priority: "low",
-    createdAt: Date.now()
-  },
-  {
-    id: 't17',
-    title: "Phân công ca trực hướng dẫn workshop cho tình nguyện viên và nhân sự khiếm thính",
-    desc: "Sắp xếp lịch làm việc cụ thể cho từng buổi, đảm bảo luôn có người hỗ trợ khách làm sản phẩm.",
-    dept: "Nhân sự",
-    status: "todo",
-    product: "ws",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't18',
-    title: "Tập huấn quy trình đón tiếp và check-in khách đặt trước qua Form",
-    desc: "Hướng dẫn nhân viên quầy cách tra cứu danh sách đăng ký từ Google Sheets, xác nhận và mời khách chọn nước.",
-    dept: "Nhân sự",
-    status: "todo",
-    product: "ws",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't19',
-    title: "Tổng hợp danh sách đăng ký và đối soát thanh toán đặt trước",
-    desc: "Kiểm tra các giao dịch chuyển khoản đặt trước Combo, cập nhật trạng thái đã thanh toán vào Google Sheets.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "ws",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't20',
-    title: "Lên kịch bản và quay video ngắn truyền thông nước hoa Elixir 50ml",
-    desc: "Xây dựng video TikTok/Reels lột tả nốt hương thông sương mờ đặc trưng và kể câu chuyện về Quán của Thời Thanh Xuân.",
+    id: "mkt2",
+    title: "Content Giới Thiệu Workshop 200k",
+    desc: "Số lượng: 10 bài content giới thiệu chi tiết về Workshop tự làm sản phẩm trị giá 200k.",
     dept: "Truyền thông & MKT",
     status: "todo",
-    product: "e50",
+    product: "ws",
     priority: "high",
-    createdAt: Date.now()
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "20/06/2026",
+    endDate: "25/06/2026",
+    createdAt: Date.now() - 86400000 * 1
   },
   {
-    id: 't21',
-    title: "Lên lịch phát sóng Livestream bán nước hoa Elixir trên Tiktok/Shopee",
-    desc: "Lên lịch live định kỳ, chuẩn bị kịch bản tương tác giới thiệu sản phẩm trực tiếp và xúc tiến đơn hàng.",
-    dept: "Truyền thông & MKT",
-    status: "todo",
-    product: "e50",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't22',
-    title: "Thiết kế Landing Page bán hàng chuyên biệt cho nước hoa Elixir 50ml",
-    desc: "Thiết kế trang Landing Page tối ưu chuyển đổi, nêu bật các tầng hương tinh tế và thiết kế bao bì nghệ thuật.",
-    dept: "Truyền thông & MKT",
-    status: "todo",
-    product: "e50",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't23',
-    title: "Thiết lập tính năng gợi ý sản phẩm mua kèm (Cross-sell) trên Landing Page",
-    desc: "Cài đặt thuật toán hoặc mục gợi ý: Khách mua nước hoa Elixir sẽ được gợi ý mua kèm Trà Oolong mật hoặc EDP 30ml.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "e50",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't24',
-    title: "Đồng bộ tồn kho nước hoa Elixir 50ml lên hệ thống bán hàng KiotViet",
-    desc: "Cập nhật chính xác số lượng tồn kho thực tế lên hệ thống KiotViet để tránh tình trạng lệch tồn kho khi bán đa kênh.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "e50",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't25',
-    title: "Sản xuất chai mẫu thử (tester 2ml) nước hoa Elixir 50ml số lượng lớn",
-    desc: "Chuẩn bị vỏ chai thủy tinh 2ml, vòi xịt mini và tiến hành chiết nước hoa làm mẫu thử tặng kèm khách hàng.",
-    dept: "Sản xuất",
-    status: "todo",
-    product: "e50",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't26',
-    title: "Đóng gói sẵn nước hoa Elixir 50ml kèm quà tặng nhỏ và thiệp cảm ơn",
-    desc: "Hộp quà mộc mạc, kèm thiệp viết tay bằng cả tấm lòng của các bạn khiếm thính để gửi tới khách mua online.",
-    dept: "Sản xuất",
-    status: "todo",
-    product: "e50",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't27',
-    title: "Set up quầy trải nghiệm xịt thử nước hoa Elixir 50ml tại trung tâm quán",
-    desc: "Thiết kế góc dùng thử nước hoa nhỏ xinh cạnh quầy trà, bày biện lọ dùng thử và thẻ ngửi hương.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "e50",
-    priority: "low",
-    createdAt: Date.now()
-  },
-  {
-    id: 't28',
-    title: "Thiết lập chương trình tặng mẫu thử (tester 2ml) nước hoa Elixir",
-    desc: "Cài đặt chương trình: Mua hóa đơn bất kỳ tại quầy hoặc mua Trà online được tặng kèm 1 tester nước hoa Elixir.",
-    dept: "Truyền thông & MKT",
-    status: "todo",
-    product: "e50",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't29',
-    title: "Thiết lập mã giảm giá và chương trình ưu đãi độc quyền trên Livestream",
-    desc: "Thiết lập các mã voucher ngắn hạn phục vụ các khung giờ vàng livestream xúc tiến mua hàng ngay lập tức.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "e50",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't30',
-    title: "Theo dõi doanh số bán hàng nước hoa qua KiotViet và báo cáo hàng tuần",
-    desc: "Tổng hợp dữ liệu doanh số từ Landing Page, KiotViet, Livestream để đánh giá hiệu quả chương trình bán chéo.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "e50",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't31',
-    title: "Kiểm kê số lượng tồn kho thực tế của các loại trà thảo mộc",
-    desc: "Kiểm tra số lượng và hạn sử dụng trà oolong mật, trà xuân tại kho để lập kế hoạch giải phóng tồn kho.",
-    dept: "Sản xuất",
-    status: "todo",
-    product: "tea",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't32',
-    title: "Nghiên cứu và làm thử bánh cookies hương vị Matcha, Hojicha, Chocolate",
-    desc: "Thử nghiệm công thức bánh ngọt khô ăn kèm trà, sử dụng nguyên liệu pha chế chất lượng sẵn có của quán.",
-    dept: "Sản xuất",
-    status: "todo",
-    product: "tea",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't33',
-    title: "Đóng gói set bột Matcha và Hojicha phục vụ khách tự pha chế",
-    desc: "Chia bột matcha và bột hojicha thành các set nhỏ có kèm nhãn hướng dẫn định lượng chi tiết.",
-    dept: "Sản xuất",
-    status: "todo",
-    product: "tea",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't34',
-    title: "Setup góc trải nghiệm 'Tự tay làm một ly Matcha' tại quầy bar",
-    desc: "Trang bị bát chasen, chổi chasen đánh trà, thìa tre múc bột và tờ hướng dẫn các bước đánh bọt Matcha Nhật Bản.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "tea",
-    priority: "high",
-    createdAt: Date.now()
-  },
-  {
-    id: 't35',
-    title: "Thiết kế góc trưng bày sản phẩm 'Văn hóa Trà và Thanh Xuân'",
-    desc: "Trưng bày hộp trà oolong mật, trà xuân kèm hoa khô, ấm trà gốm mộc mạc và những thông điệp viết tay ấm áp.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "tea",
-    priority: "low",
-    createdAt: Date.now()
-  },
-  {
-    id: 't36',
-    title: "Nướng bánh cookies tươi (Matcha/Hojicha/Chocolate) phục vụ mỗi sáng",
-    desc: "Lên lịch chuẩn bị nguyên liệu bột và nướng bánh tươi nóng hổi phục vụ khách dùng kèm trà.",
-    dept: "Vận hành & Thiết kế",
-    status: "todo",
-    product: "tea",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't37',
-    title: "Biên tập chuỗi bài viết đẩy mạnh truyền thông 'Văn hóa trà & Sự tĩnh lặng'",
-    desc: "Viết bài chia sẻ nghệ thuật thưởng trà, giá trị tinh thần khi uống trà chậm rãi bên hiên nhà gỗ của quán.",
+    id: "mkt3",
+    title: "Content Giới Thiệu Set Trà 100k",
+    desc: "Số lượng: 5 bài content giới thiệu set trà quà tặng mang đậm phong vị Đà Lạt.",
     dept: "Truyền thông & MKT",
     status: "todo",
     product: "tea",
     priority: "high",
-    createdAt: Date.now()
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "20/06/2026",
+    endDate: "25/06/2026",
+    createdAt: Date.now() - 86400000 * 1
   },
   {
-    id: 't38',
-    title: "Thiết kế poster & video ngắn giới thiệu trải nghiệm tự làm Matcha",
-    desc: "Chụp ảnh, quay video ngắn hướng dẫn dùng chổi chasen đánh matcha bọt mịn và thưởng thức kèm bánh cookies.",
-    dept: "Truyền thông & MKT",
-    status: "todo",
-    product: "tea",
-    priority: "medium",
-    createdAt: Date.now()
-  },
-  {
-    id: 't39',
-    title: "Tạo gói Combo ưu đãi 'Trà ấm & Bánh Cookies tươi' giải quyết tồn kho",
-    desc: "Thiết kế ưu đãi ghép cặp trà oolong mật/trà xuân với set bánh cookies để đẩy mạnh doanh số bán kèm.",
+    id: "mkt4",
+    title: "Content Bán Trà/Bánh Cookie",
+    desc: "Số lượng: 10 bài content đẩy mạnh bán chéo set trà thơm ấm và bánh cookie giòn ngon.",
     dept: "Truyền thông & MKT",
     status: "todo",
     product: "tea",
     priority: "high",
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "20/06/2026",
+    endDate: "25/06/2026",
+    createdAt: Date.now() - 86400000 * 1
+  },
+  {
+    id: "mkt5",
+    title: "Content Bán Nước Hoa ĐLNBHN",
+    desc: "Số lượng: 10 bài content giới thiệu và đẩy bán dòng nước hoa Đà Lạt Bên Hiên Nhà.",
+    dept: "Truyền thông & MKT",
+    status: "todo",
+    product: "e50",
+    priority: "high",
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "21/06/2026",
+    endDate: "30/06/2026",
     createdAt: Date.now()
   },
   {
-    id: 't40',
-    title: "Đào tạo nhân viên khiếm thính kỹ năng hướng dẫn khách đánh matcha",
-    desc: "Tập huấn các ngôn ngữ ký hiệu đơn giản để hướng dẫn khách cầm chổi chasen đánh trà tạo bọt mịn.",
-    dept: "Nhân sự",
+    id: "mkt6",
+    title: "Buổi Live Stream Các Hoạt Động Tại Quán",
+    desc: "Số lượng: 3 buổi livestream chia sẻ không gian bình yên và các hoạt động thường nhật ấm cúng tại quán.",
+    dept: "Truyền thông & MKT",
     status: "todo",
-    product: "tea",
+    product: "ws",
     priority: "high",
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "21/06/2026",
+    endDate: "30/06/2026",
+    createdAt: Date.now()
+  },
+  {
+    id: "mkt7",
+    title: "Buổi Live Stream Bán Hàng",
+    desc: "Số lượng: 10 buổi livestream giới thiệu và thúc đẩy doanh số bán các sản phẩm trực tiếp.",
+    dept: "Truyền thông & MKT",
+    status: "todo",
+    product: "e50",
+    priority: "high",
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "22/06/2026",
+    endDate: "30/06/2026",
+    createdAt: Date.now()
+  },
+  {
+    id: "mkt8",
+    title: "Content Giới Thiệu Workshop Khách Đoàn",
+    desc: "Số lượng: 5 bài viết giới thiệu gói workshop thiết kế riêng cho các đoàn khách du lịch và doanh nghiệp.",
+    dept: "Truyền thông & MKT",
+    status: "todo",
+    product: "ws",
+    priority: "high",
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "22/06/2026",
+    endDate: "30/06/2026",
+    createdAt: Date.now()
+  },
+  {
+    id: "mkt9",
+    title: "Content Giới Thiệu CT 1000 Chiếc Ô",
+    desc: "Số lượng: 3 bài viết giới thiệu chương trình tặng/mượn 1000 chiếc ô đầy ý nghĩa tại Đà Lạt.",
+    dept: "Truyền thông & MKT",
+    status: "todo",
+    product: "ws",
+    priority: "high",
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "22/06/2026",
+    endDate: "30/06/2026",
+    createdAt: Date.now()
+  },
+  {
+    id: "mkt10",
+    title: "Content giảm 50%hs-sv",
+    desc: "Số lượng: 5 bài truyền thông chương trình ưu đãi đặc biệt giảm 50% cho học sinh - sinh viên.",
+    dept: "Truyền thông & MKT",
+    status: "todo",
+    product: "ws",
+    priority: "high",
+    owner: "Nguyễn Hoàng Phi",
+    supporter: "Team Marketing",
+    startDate: "22/06/2026",
+    endDate: "30/06/2026",
     createdAt: Date.now()
   }
 ];
 
 const defaultLogs = [
   { type: 'info', text: 'Hệ thống quản lý dự án hè khởi tạo thành công!', time: '08:30:00' },
-  { type: 'complete', text: 'Nhập trà oolong mật, trà xuân và matcha hoàn thành.', time: '09:15:20' },
-  { type: 'add', text: 'Thêm công việc: Thiết lập file theo dõi doanh thu chiến dịch Hè.', time: '10:02:11' }
+  { type: 'add', text: 'Đã tải danh sách công việc chính thức từ Duy & Team Marketing.', time: '09:00:00' }
 ];
 
 // Document Ready
@@ -465,14 +318,11 @@ function initData() {
 
   if (storedTasks) {
     tasks = JSON.parse(storedTasks);
-    // Dynamic migration: if t31 doesn't exist, we add all new tasks to the existing task list
-    const hasT31 = tasks.some(t => t.id === 't31');
-    if (!hasT31) {
-      const newTasksToInject = defaultTasks.filter(dt => !tasks.some(st => st.id === dt.id));
-      if (newTasksToInject.length > 0) {
-        tasks = [...tasks, ...newTasksToInject];
-        saveTasksToStorage();
-      }
+    // Dynamic migration: if duy1 doesn't exist, we replace everything with the new official tasks
+    const hasDuy1 = tasks.some(t => t.id === 'duy1');
+    if (!hasDuy1) {
+      tasks = [...defaultTasks];
+      saveTasksToStorage();
     }
   } else {
     tasks = [...defaultTasks];
@@ -485,6 +335,63 @@ function initData() {
     logs = [...defaultLogs];
     saveLogsToStorage();
   }
+}
+
+// Convert "DD/MM/YYYY" to "YYYY-MM-DD"
+function dateToHtml(dateStr) {
+  if (!dateStr) return '';
+  const parts = dateStr.split('/');
+  if (parts.length === 3) {
+    return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+  }
+  return '';
+}
+
+// Convert "YYYY-MM-DD" to "DD/MM/YYYY"
+function dateFromHtml(dateStr) {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return '';
+}
+
+// Convert "DD/MM/YYYY" to Date Object
+function getTaskDateObj(dateStr) {
+  if (!dateStr) return null;
+  const parts = dateStr.split('/');
+  if (parts.length === 3) {
+    return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+  }
+  return null;
+}
+
+// Get dynamic project phase for a task (Phase 1 to 4)
+function getTaskPhase(task) {
+  const date = getTaskDateObj(task.endDate || task.startDate);
+  if (!date) return 1;
+  const month = date.getMonth() + 1; // 1-indexed
+  const day = date.getDate();
+  if (month === 6) {
+    return 1;
+  } else if (month === 7) {
+    if (day <= 15) return 2;
+    return 3;
+  } else if (month === 8) {
+    return 4;
+  }
+  return 1; // fallback
+}
+
+// Get formatted date range string for rendering
+function getTaskDates(task) {
+  if (task.startDate && task.endDate) {
+    const startPart = task.startDate.split('/').slice(0, 2).join('/');
+    const endPart = task.endDate.split('/').slice(0, 2).join('/');
+    return `${startPart} - ${endPart}`;
+  }
+  return "Chưa rõ";
 }
 
 function saveTasksToStorage() {
@@ -678,6 +585,10 @@ function setupEventListeners() {
     const product = document.getElementById('task-product').value;
     const priority = document.getElementById('task-priority').value;
     const status = document.getElementById('task-status').value;
+    const owner = document.getElementById('task-owner').value.trim();
+    const supporter = document.getElementById('task-supporter').value.trim();
+    const startDate = dateFromHtml(document.getElementById('task-start-date').value);
+    const endDate = dateFromHtml(document.getElementById('task-end-date').value);
 
     if (!title) return;
 
@@ -693,7 +604,11 @@ function setupEventListeners() {
           dept,
           product,
           priority,
-          status
+          status,
+          owner,
+          supporter,
+          startDate,
+          endDate
         };
         logActivity('info', `Cập nhật công việc: ${title}`);
         if (oldStatus !== status) {
@@ -710,6 +625,10 @@ function setupEventListeners() {
         product,
         priority,
         status,
+        owner,
+        supporter,
+        startDate,
+        endDate,
         createdAt: Date.now()
       };
       tasks.push(newTask);
@@ -853,6 +772,30 @@ function renderChecklist() {
 
         tagsRow.appendChild(prodBadge);
         tagsRow.appendChild(priorityBadge);
+
+        if (task.owner) {
+          const ownerBadge = document.createElement('span');
+          ownerBadge.className = 'badge';
+          ownerBadge.style.fontSize = '8.5px';
+          ownerBadge.style.border = 'none';
+          ownerBadge.style.background = 'rgba(94, 130, 107, 0.15)';
+          ownerBadge.style.color = 'var(--text-muted)';
+          ownerBadge.innerText = `👤 ${task.owner}` + (task.supporter ? ` + ${task.supporter}` : '');
+          tagsRow.appendChild(ownerBadge);
+        }
+
+        if (task.startDate && task.endDate) {
+          const dateBadge = document.createElement('span');
+          dateBadge.className = 'badge';
+          dateBadge.style.fontSize = '8.5px';
+          dateBadge.style.border = 'none';
+          dateBadge.style.background = 'rgba(202, 106, 75, 0.15)';
+          dateBadge.style.color = 'var(--terracotta)';
+          const sPart = task.startDate.split('/').slice(0, 2).join('/');
+          const ePart = task.endDate.split('/').slice(0, 2).join('/');
+          dateBadge.innerText = `📅 ${sPart} - ${ePart}`;
+          tagsRow.appendChild(dateBadge);
+        }
 
         details.appendChild(titleEl);
         details.appendChild(tagsRow);
@@ -1018,6 +961,37 @@ function renderKanban() {
     descEl.className = 'card-desc';
     descEl.innerText = task.desc || 'Chưa có mô tả chi tiết.';
 
+    // Owner & Dates Row in Kanban card
+    const cardMetaRow = document.createElement('div');
+    cardMetaRow.className = 'card-meta-row';
+    cardMetaRow.style.display = 'flex';
+    cardMetaRow.style.justifyContent = 'space-between';
+    cardMetaRow.style.alignItems = 'center';
+    cardMetaRow.style.marginTop = '8px';
+    cardMetaRow.style.marginBottom = '8px';
+    cardMetaRow.style.fontSize = '11px';
+    cardMetaRow.style.color = 'var(--text-muted)';
+    
+    let ownerText = '';
+    if (task.owner) {
+      ownerText = `👤 ${task.owner}`;
+      if (task.supporter) {
+        ownerText += ` + ${task.supporter}`;
+      }
+    }
+    
+    let dateText = '';
+    if (task.startDate && task.endDate) {
+      const sDate = task.startDate.split('/').slice(0, 2).join('/');
+      const eDate = task.endDate.split('/').slice(0, 2).join('/');
+      dateText = `📅 ${sDate} - ${eDate}`;
+    }
+    
+    cardMetaRow.innerHTML = `
+      <span>${ownerText}</span>
+      <span>${dateText}</span>
+    `;
+
     // Card Footer
     const footer = document.createElement('div');
     footer.className = 'card-footer';
@@ -1044,6 +1018,7 @@ function renderKanban() {
     card.appendChild(cardTop);
     card.appendChild(titleEl);
     card.appendChild(descEl);
+    card.appendChild(cardMetaRow);
     card.appendChild(footer);
 
     colContainer.appendChild(card);
@@ -1060,6 +1035,10 @@ function openEditModal(task) {
   document.getElementById('task-product').value = task.product;
   document.getElementById('task-priority').value = task.priority;
   document.getElementById('task-status').value = task.status;
+  document.getElementById('task-owner').value = task.owner || '';
+  document.getElementById('task-supporter').value = task.supporter || '';
+  document.getElementById('task-start-date').value = dateToHtml(task.startDate);
+  document.getElementById('task-end-date').value = dateToHtml(task.endDate);
 
   document.getElementById('task-modal').classList.add('active');
 }
@@ -1263,52 +1242,6 @@ const PHASES = [
   }
 ];
 
-function getTaskDates(taskId) {
-  switch (taskId) {
-    case 't4': return "10/06 - 18/06";
-    case 't8': return "12/06 - 18/06";
-    case 't10': return "10/06 - 17/06";
-    case 't1': return "15/06 - 25/06";
-    case 't2': return "18/06 - 26/06";
-    case 't7': return "18/06 - 24/06";
-    case 't11': return "18/06 - 25/06";
-    case 't3': return "20/06 - 28/06";
-    case 't6': return "20/06 - 27/06";
-    case 't12': return "20/06 - 30/06";
-    case 't14': return "20/06 - 28/06";
-    case 't9': return "22/06 - 28/06";
-    case 't13': return "22/06 - 29/06";
-    case 't15': return "22/06 - 29/06";
-    case 't17': return "24/06 - 29/06";
-    case 't5': return "25/06 - 02/07";
-    case 't16': return "25/06 - 30/06";
-    case 't18': return "25/06 - 29/06";
-    case 't19': return "28/06 - 05/07";
-    case 't20': return "01/07 - 10/07";
-    case 't22': return "01/07 - 08/07";
-    case 't25': return "01/07 - 08/07";
-    case 't23': return "03/07 - 10/07";
-    case 't21': return "05/07 - 12/07";
-    case 't24': return "05/07 - 09/07";
-    case 't27': return "06/07 - 12/07";
-    case 't26': return "08/07 - 15/07";
-    case 't28': return "08/07 - 15/07";
-    case 't29': return "10/07 - 15/07";
-    case 't30': return "15/07 - 30/07";
-    case 't31': return "15/07 - 20/07";
-    case 't32': return "16/07 - 22/07";
-    case 't40': return "17/07 - 23/07";
-    case 't33': return "18/07 - 24/07";
-    case 't34': return "18/07 - 23/07";
-    case 't37': return "18/07 - 28/07";
-    case 't35': return "20/07 - 26/07";
-    case 't38': return "20/07 - 27/07";
-    case 't39': return "22/07 - 31/07";
-    case 't36': return "23/07 - 15/08";
-    default: return "01/08 - 15/08";
-  }
-}
-
 function renderTimeline() {
   const container = document.getElementById('timeline-path-container');
   if (!container) return;
@@ -1316,15 +1249,8 @@ function renderTimeline() {
   container.innerHTML = '';
 
   PHASES.forEach(phase => {
-    let phaseTasks = [];
-    if (phase.id === 4) {
-      phaseTasks = tasks.filter(t => {
-        const isMapped = PHASES.some(p => p.id !== 4 && p.taskIds.includes(t.id));
-        return !isMapped;
-      });
-    } else {
-      phaseTasks = tasks.filter(t => phase.taskIds.includes(t.id));
-    }
+    // Filter tasks dynamically using getTaskPhase
+    const phaseTasks = tasks.filter(t => getTaskPhase(t) === phase.id);
 
     // Filter by current product sidebar filter if active
     const filteredPhaseTasks = phaseTasks.filter(t => 
@@ -1360,8 +1286,8 @@ function renderTimeline() {
       wrapper.innerHTML = `<p style="font-size:12px; color:var(--text-muted); padding: 10px 0;">Không có đầu việc nào thuộc giai đoạn này cho dòng sản phẩm đang chọn.</p>`;
     } else {
       const sortedTasks = [...filteredPhaseTasks].sort((a, b) => {
-        const dateA = getTaskDates(a.id).split(' - ')[0];
-        const dateB = getTaskDates(b.id).split(' - ')[0];
+        const dateA = getTaskDates(a).split(' - ')[0];
+        const dateB = getTaskDates(b).split(' - ')[0];
         return dateA.localeCompare(dateB);
       });
 
@@ -1377,7 +1303,7 @@ function renderTimeline() {
         
         const timeSpan = document.createElement('span');
         timeSpan.className = 'timeline-task-time';
-        timeSpan.innerText = getTaskDates(task.id);
+        timeSpan.innerText = getTaskDates(task);
 
         const details = document.createElement('div');
         details.className = 'timeline-task-details';
@@ -1400,6 +1326,18 @@ function renderTimeline() {
 
         meta.appendChild(dept);
         meta.appendChild(prod);
+        
+        // Owner and supporter meta info
+        if (task.owner) {
+          const ownerMeta = document.createElement('span');
+          ownerMeta.className = 'timeline-task-owner';
+          ownerMeta.style.marginLeft = '8px';
+          ownerMeta.style.fontSize = '11px';
+          ownerMeta.style.color = 'var(--text-muted)';
+          ownerMeta.innerText = `👤 ${task.owner}` + (task.supporter ? ` + ${task.supporter}` : '');
+          meta.appendChild(ownerMeta);
+        }
+
         details.appendChild(title);
         details.appendChild(meta);
 

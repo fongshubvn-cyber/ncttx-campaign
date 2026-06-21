@@ -215,10 +215,11 @@
           <div class="kanban-filters">
             <select class="filter-select" id="filter-dept">
               <option value="all">Tất cả Phòng Ban</option>
-              <option value="Sản xuất">Ban Sản xuất</option>
+              <option value="Bán hàng">Ban Bán hàng</option>
+              <option value="Kinh doanh">Ban Kinh doanh</option>
+              <option value="Pha chế">Ban Pha chế</option>
+              <option value="Vấn đề chung">Vấn đề chung</option>
               <option value="Truyền thông & MKT">Ban Truyền thông & MKT</option>
-              <option value="Vận hành & Thiết kế">Ban Vận hành & Thiết kế</option>
-              <option value="Nhân sự">Ban Nhân sự</option>
             </select>
 
             <select class="filter-select" id="filter-product">
@@ -422,10 +423,11 @@
           <div class="form-group">
             <label class="form-label" for="task-dept">Phòng ban phụ trách</label>
             <select id="task-dept" class="form-select">
-              <option value="Sản xuất">Ban Sản xuất</option>
+              <option value="Bán hàng">Ban Bán hàng</option>
+              <option value="Kinh doanh">Ban Kinh doanh</option>
+              <option value="Pha chế">Ban Pha chế</option>
+              <option value="Vấn đề chung">Vấn đề chung</option>
               <option value="Truyền thông & MKT">Ban Truyền thông & MKT</option>
-              <option value="Vận hành & Thiết kế">Ban Vận hành & Thiết kế</option>
-              <option value="Nhân sự">Ban Nhân sự</option>
             </select>
           </div>
 
@@ -437,6 +439,30 @@
               <option value="edp30">Nước hoa EDP 30ml</option>
               <option value="tea">Các Loại Trà Thảo Mộc</option>
             </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="task-owner">Người phụ trách chính</label>
+            <input type="text" id="task-owner" placeholder="Ví dụ: Nguyễn Trọng Duy" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="task-supporter">Người hỗ trợ</label>
+            <input type="text" id="task-supporter" placeholder="Ví dụ: Thuỳ Dương" class="form-input">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="task-start-date">Ngày bắt đầu</label>
+            <input type="date" id="task-start-date" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="task-end-date">Hạn chót (Deadline)</label>
+            <input type="date" id="task-end-date" class="form-input">
           </div>
         </div>
 
