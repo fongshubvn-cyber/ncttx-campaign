@@ -8,13 +8,27 @@ let currentProductFilter = 'all'; // 'all', 'ws', 'e50', 'edp30', 'tea'
 let dragTaskEl = null;
 let editingTaskId = null;
 
-// Product Data Mapping for Labels/Titles
-const PRODUCT_INFO = {
-  'ws': { name: 'Combo Workshop', badge: 'ws-theme', code: 'WS' },
-  'e50': { name: 'Elixir 50ml: Đà Lạt hiên nhà', badge: 'e50-theme', code: 'E50' },
-  'edp30': { name: 'EDP 30ml: Xuân hạ thu đông', badge: 'edp30-theme', code: 'EDP30' },
-  'tea': { name: 'Các loại trà: Oolong, Xuân, Matcha', badge: 'tea-theme', code: 'TEA' }
-};
+// Dynamic Campaigns List
+let campaigns = [];
+
+const defaultCampaigns = [
+  { id: "ws", name: "Combo Workshop & Nước", code: "WS", color: "#e5b25d" },
+  { id: "e50", name: "Nước hoa Elixir 50ml", code: "E50", color: "#ca6a4b" },
+  { id: "edp30", name: "Nước hoa EDP 30ml", code: "EDP30", color: "#5f8dcd" },
+  { id: "tea", name: "Các Loại Trà Thảo Mộc", code: "TEA", color: "#89b057" }
+];
+
+function getCampaignInfo(campaignId) {
+  return campaigns.find(c => c.id === campaignId) || { name: campaignId, code: campaignId.toUpperCase(), color: '#5e826b' };
+}
+
+function hexToRgba(hex, alpha) {
+  if (!hex || hex.indexOf('#') !== 0) return `rgba(255, 255, 255, ${alpha})`;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 // Department Options
 const DEPARTMENTS = [
@@ -315,6 +329,14 @@ function checkAuthentication() {
 function initData() {
   const storedTasks = localStorage.getItem('ncttx_tasks');
   const storedLogs = localStorage.getItem('ncttx_logs');
+  const storedCampaigns = localStorage.getItem('ncttx_campaigns');
+
+  if (storedCampaigns) {
+    campaigns = JSON.parse(storedCampaigns);
+  } else {
+    campaigns = [...defaultCampaigns];
+    saveCampaignsToStorage();
+  }
 
   if (storedTasks) {
     tasks = JSON.parse(storedTasks);
@@ -335,6 +357,90 @@ function initData() {
     logs = [...defaultLogs];
     saveLogsToStorage();
   }
+
+  // Populate dynamic options
+  renderCampaigns();
+}
+
+function saveCampaignsToStorage() {
+  localStorage.setItem('ncttx_campaigns', JSON.stringify(campaigns));
+}
+
+function renderCampaigns() {
+  // 1. Render sidebar list
+  const sidebarList = document.getElementById('sidebar-product-list');
+  if (sidebarList) {
+    sidebarList.innerHTML = '';
+    
+    // Add "All" option
+    const allItem = document.createElement('div');
+    allItem.className = `product-item ${currentProductFilter === 'all' ? 'active' : ''}`;
+    allItem.setAttribute('data-filter', 'all');
+    allItem.innerHTML = `
+      <div class="product-name">Tất cả sản phẩm</div>
+      <div class="product-desc">Hiển thị mọi công việc của dự án hè.</div>
+    `;
+    allItem.addEventListener('click', () => handleProductFilterClick('all'));
+    sidebarList.appendChild(allItem);
+
+    // Add each campaign
+    campaigns.forEach(c => {
+      const item = document.createElement('div');
+      item.className = `product-item ${currentProductFilter === c.id ? 'active' : ''}`;
+      item.setAttribute('data-filter', c.id);
+      
+      // Apply custom left border indicator
+      item.style.borderLeft = `4px solid ${c.color}`;
+      
+      item.innerHTML = `
+        <div class="product-name" style="color: var(--text-main); font-weight: 500;">${c.name}</div>
+        <div class="product-desc">Nhóm công việc thuộc dòng ${c.name} (${c.code}).</div>
+      `;
+      item.addEventListener('click', () => handleProductFilterClick(c.id));
+      sidebarList.appendChild(item);
+    });
+  }
+
+  // 2. Render Kanban filter dropdown
+  const filterSelect = document.getElementById('filter-product');
+  if (filterSelect) {
+    const val = filterSelect.value || currentProductFilter;
+    filterSelect.innerHTML = `<option value="all">Tất cả Sản phẩm</option>`;
+    campaigns.forEach(c => {
+      filterSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+    filterSelect.value = val;
+  }
+
+  // 3. Render Modal task form select
+  const formSelect = document.getElementById('task-product');
+  if (formSelect) {
+    formSelect.innerHTML = '';
+    campaigns.forEach(c => {
+      formSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+  }
+}
+
+function handleProductFilterClick(filterVal) {
+  currentProductFilter = filterVal;
+  
+  // Highlight active items
+  const items = document.querySelectorAll('.product-item');
+  items.forEach(item => {
+    item.classList.remove('active');
+    if (item.getAttribute('data-filter') === filterVal) {
+      item.classList.add('active');
+    }
+  });
+
+  // Sync Kanban filter value
+  const kanbanSelect = document.getElementById('filter-product');
+  if (kanbanSelect) {
+    kanbanSelect.value = filterVal;
+  }
+
+  renderApp();
 }
 
 // Convert "DD/MM/YYYY" to "YYYY-MM-DD"
@@ -515,25 +621,6 @@ function setupEventListeners() {
     });
   });
 
-  // Product Filter Selection (Sidebar)
-  const productItems = document.querySelectorAll('.product-item');
-  productItems.forEach(item => {
-    item.addEventListener('click', () => {
-      productItems.forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-      
-      currentProductFilter = item.getAttribute('data-filter');
-      
-      // Update Kanban select filter as well to match
-      const kanbanProductFilter = document.getElementById('filter-product');
-      if (kanbanProductFilter) {
-        kanbanProductFilter.value = currentProductFilter;
-      }
-      
-      renderApp();
-    });
-  });
-
   // Kanban Filter select inputs
   document.getElementById('filter-dept').addEventListener('change', (e) => {
     renderKanban();
@@ -541,7 +628,8 @@ function setupEventListeners() {
   document.getElementById('filter-product').addEventListener('change', (e) => {
     currentProductFilter = e.target.value;
     // Highlight sidebar active item accordingly
-    productItems.forEach(i => {
+    const items = document.querySelectorAll('.product-item');
+    items.forEach(i => {
       i.classList.remove('active');
       if (i.getAttribute('data-filter') === currentProductFilter) {
         i.classList.add('active');
@@ -549,6 +637,55 @@ function setupEventListeners() {
     });
     renderApp();
   });
+
+  // Campaign Modal actions
+  const campaignModal = document.getElementById('campaign-modal');
+  const addCampaignBtn = document.getElementById('btn-add-campaign');
+  const cancelCampaignBtn = document.getElementById('btn-cancel-campaign');
+  const closeCampaignModalBtn = document.getElementById('btn-close-campaign-modal');
+  const campaignForm = document.getElementById('campaign-form');
+
+  if (addCampaignBtn) {
+    addCampaignBtn.addEventListener('click', () => {
+      campaignForm.reset();
+      campaignModal.classList.add('active');
+    });
+  }
+
+  const closeCampaignModal = () => {
+    campaignModal.classList.remove('active');
+  };
+
+  if (closeCampaignModalBtn) closeCampaignModalBtn.addEventListener('click', closeCampaignModal);
+  if (cancelCampaignBtn) cancelCampaignBtn.addEventListener('click', closeCampaignModal);
+  if (campaignModal) {
+    campaignModal.addEventListener('click', (e) => {
+      if (e.target === campaignModal) closeCampaignModal();
+    });
+  }
+
+  if (campaignForm) {
+    campaignForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('campaign-name').value.trim();
+      const code = document.getElementById('campaign-code').value.trim().toUpperCase();
+      const color = document.getElementById('campaign-color').value;
+
+      if (!name || !code) return;
+
+      const id = 'camp_' + Date.now();
+      const newCamp = { id, name, code, color };
+      
+      campaigns.push(newCamp);
+      saveCampaignsToStorage();
+      logActivity('add', `Thêm chiến dịch mới: ${name} (${code})`);
+      
+      renderCampaigns();
+      closeCampaignModal();
+      renderApp();
+    });
+  }
 
   // Modal actions
   const modal = document.getElementById('task-modal');
@@ -759,10 +896,13 @@ function renderChecklist() {
         const tagsRow = document.createElement('div');
         tagsRow.className = 'item-tags';
         
-        const pInfo = PRODUCT_INFO[task.product];
+        const pInfo = getCampaignInfo(task.product);
         const prodBadge = document.createElement('span');
-        prodBadge.className = `badge badge-${task.product}`;
-        prodBadge.innerText = pInfo ? pInfo.code : task.product;
+        prodBadge.className = `badge`;
+        prodBadge.style.background = hexToRgba(pInfo.color, 0.15);
+        prodBadge.style.color = pInfo.color;
+        prodBadge.style.border = `1.5px solid ${pInfo.color}`;
+        prodBadge.innerText = pInfo.code;
 
         const priorityBadge = document.createElement('span');
         priorityBadge.className = `badge priority-${task.priority}`;
@@ -1007,10 +1147,13 @@ function renderKanban() {
     `;
 
     // Product Code Badge
-    const pInfo = PRODUCT_INFO[task.product];
+    const pInfo = getCampaignInfo(task.product);
     const prodBadge = document.createElement('span');
-    prodBadge.className = `badge badge-${task.product}`;
-    prodBadge.innerText = pInfo ? pInfo.code : task.product;
+    prodBadge.className = `badge`;
+    prodBadge.style.background = hexToRgba(pInfo.color, 0.15);
+    prodBadge.style.color = pInfo.color;
+    prodBadge.style.border = `1.5px solid ${pInfo.color}`;
+    prodBadge.innerText = pInfo.code;
 
     footer.appendChild(deptSpan);
     footer.appendChild(prodBadge);
@@ -1165,19 +1308,17 @@ function renderProductChart() {
 
   container.innerHTML = '';
 
-  Object.keys(PRODUCT_INFO).forEach(key => {
-    const pInfo = PRODUCT_INFO[key];
-    const prodTasks = tasks.filter(t => t.product === key);
+  campaigns.forEach(c => {
+    const prodTasks = tasks.filter(t => t.product === c.id);
     const total = prodTasks.length;
-    const completed = prodTasks.filter(t => t.status === 'done').length;
     const pct = tasks.length > 0 ? Math.round((total / tasks.length) * 100) : 0;
 
     const item = document.createElement('div');
     item.className = 'chart-bar-item';
     item.innerHTML = `
-      <div class="chart-label" title="${pInfo.name}">${pInfo.name}</div>
+      <div class="chart-label" title="${c.name}">${c.name}</div>
       <div class="chart-track">
-        <div class="chart-fill prod-fill-${key}" style="width: ${pct}%;"></div>
+        <div class="chart-fill" style="width: ${pct}%; background: ${c.color};"></div>
       </div>
       <div class="chart-value">${total} việc (${pct}%)</div>
     `;
@@ -1319,10 +1460,13 @@ function renderTimeline() {
         dept.className = 'timeline-task-dept';
         dept.innerHTML = `<strong>${task.dept}</strong>`;
 
-        const pInfo = PRODUCT_INFO[task.product];
+        const pInfo = getCampaignInfo(task.product);
         const prod = document.createElement('span');
-        prod.className = `badge badge-${task.product}`;
-        prod.innerText = pInfo ? pInfo.code : task.product;
+        prod.className = `badge`;
+        prod.style.background = hexToRgba(pInfo.color, 0.15);
+        prod.style.color = pInfo.color;
+        prod.style.border = `1.5px solid ${pInfo.color}`;
+        prod.innerText = pInfo.code;
 
         meta.appendChild(dept);
         meta.appendChild(prod);

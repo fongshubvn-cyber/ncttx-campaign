@@ -64,32 +64,15 @@
           </svg>
           Sản phẩm & Dịch vụ Hè
         </h3>
-        <div class="product-list">
-          <div class="product-item active" data-filter="all">
-            <div class="product-name">Tất cả sản phẩm</div>
-            <div class="product-desc">Hiển thị mọi công việc của dự án hè.</div>
-          </div>
-          
-          <div class="product-item ws-theme" data-filter="ws">
-            <div class="product-name">Combo Workshop & Nước</div>
-            <div class="product-desc">Workshop làm xà phòng thảo mộc, nến thơm và nước uống tự chọn.</div>
-          </div>
-          
-          <div class="product-item e50-theme" data-filter="e50">
-            <div class="product-name">Nước hoa Elixir 50ml</div>
-            <div class="product-desc">BST Elixir đậm đặc hương gỗ thông: "Đà Lạt bên hiên nhà".</div>
-          </div>
-          
-          <div class="product-item edp30-theme" data-filter="edp30">
-            <div class="product-name">Nước hoa EDP 30ml</div>
-            <div class="product-desc">Mùi hương: "Đà Lạt hiên nhà. Xuân hạ thu đông, rồi lại Xuân".</div>
-          </div>
-          
-          <div class="product-item tea-theme" data-filter="tea">
-            <div class="product-name">Các Loại Trà Thảo Mộc</div>
-            <div class="product-desc">Bộ trà hảo hạng gồm: Trà oolong mật, trà xuân và bột trà matcha.</div>
-          </div>
+        <div class="product-list" id="sidebar-product-list">
+          <!-- Dynamically populated by JS -->
         </div>
+        <button id="btn-add-campaign" class="secondary-btn" style="width: 100%; margin-top: 14px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 30px; padding: 8px 16px; cursor: pointer; transition: all 0.3s; color: var(--text-muted); border-color: var(--glass-border); background: transparent;">
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+          </svg>
+          Thêm chiến dịch
+        </button>
       </div>
 
       <!-- Sidebar Footer -->
@@ -223,11 +206,7 @@
             </select>
 
             <select class="filter-select" id="filter-product">
-              <option value="all">Tất cả Sản phẩm</option>
-              <option value="ws">Combo Workshop & Nước</option>
-              <option value="e50">Nước hoa Elixir 50ml</option>
-              <option value="edp30">Nước hoa EDP 30ml</option>
-              <option value="tea">Các Loại Trà Thảo Mộc</option>
+              <!-- Dynamically populated by JS -->
             </select>
           </div>
 
@@ -432,12 +411,9 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="task-product">Sản phẩm liên quan</label>
+            <label class="form-label" for="task-product">Sản phẩm/Chiến dịch liên quan</label>
             <select id="task-product" class="form-select">
-              <option value="ws">Combo Workshop & Nước</option>
-              <option value="e50">Nước hoa Elixir 50ml</option>
-              <option value="edp30">Nước hoa EDP 30ml</option>
-              <option value="tea">Các Loại Trà Thảo Mộc</option>
+              <!-- Dynamically populated by JS -->
             </select>
           </div>
         </div>
@@ -490,6 +466,46 @@
         <div class="modal-footer">
           <button type="button" class="secondary-btn" id="btn-cancel-task">Hủy bỏ</button>
           <button type="submit" class="primary-btn" style="box-shadow: none;">Lưu công việc</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Campaign Modal Overlay -->
+  <div class="modal-overlay" id="campaign-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Thêm Chiến Dịch Mới</h3>
+        <button class="modal-close" id="btn-close-campaign-modal">&times;</button>
+      </div>
+      <form id="campaign-form">
+        <div class="form-group">
+          <label class="form-label" for="campaign-name">Tên chiến dịch / Dòng sản phẩm</label>
+          <input type="text" id="campaign-name" required placeholder="Ví dụ: Bánh Cookie Mùa Hè..." class="form-input">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="campaign-code">Mã viết tắt</label>
+            <input type="text" id="campaign-code" required placeholder="Ví dụ: CK, WS, TEA" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="campaign-color">Màu sắc đại diện</label>
+            <select id="campaign-color" class="form-select">
+              <option value="#5e826b">Xanh thông (Sage Green)</option>
+              <option value="#ca6a4b">Đất nung (Terracotta)</option>
+              <option value="#b7c9a8">Vàng nhạt (Honey Gold)</option>
+              <option value="#9bb2a0">Xanh nhạt (Light Pine)</option>
+              <option value="#ca8f4b">Vàng ấm (Amber)</option>
+              <option value="#4b8ca8">Xanh dương (Dalat Sky)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="secondary-btn" id="btn-cancel-campaign">Hủy bỏ</button>
+          <button type="submit" class="primary-btn" style="box-shadow: none;">Lưu chiến dịch</button>
         </div>
       </form>
     </div>

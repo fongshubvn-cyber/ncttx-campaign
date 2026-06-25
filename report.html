@@ -64,6 +64,11 @@
       font-size: 12px;
       font-weight: 500;
     }
+    .task-activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
     @media (max-width: 768px) {
       body {
         padding: 20px 10px;
@@ -172,8 +177,24 @@
         </div>
 
         <div class="report-card">
-          <h3 class="section-title">Phân bổ theo Dòng Sản Phẩm</h3>
+          <h3 class="section-title">Phân bổ theo Dòng Chiến dịch</h3>
           <div class="chart-container horizontal-bar-chart" id="chart-product-container">
+            <!-- Dynamic -->
+          </div>
+        </div>
+
+        <!-- NEW: Active Tasks list -->
+        <div class="report-card">
+          <h3 class="section-title">Nhiệm vụ đang triển khai (Đang làm / Kiểm duyệt)</h3>
+          <div class="task-activity-list" id="active-tasks-container">
+            <!-- Dynamic -->
+          </div>
+        </div>
+
+        <!-- NEW: Recently Completed Tasks list -->
+        <div class="report-card">
+          <h3 class="section-title">Nhiệm vụ mới hoàn thành</h3>
+          <div class="task-activity-list" id="completed-tasks-container">
             <!-- Dynamic -->
           </div>
         </div>
@@ -189,13 +210,27 @@
   </div>
 
   <script>
-    // Product Mapping
-    const PRODUCT_INFO = {
-      'ws': { name: 'Combo Workshop & Nước', badge: 'ws-theme', code: 'WS' },
-      'e50': { name: 'Nước hoa Elixir 50ml', badge: 'e50-theme', code: 'E50' },
-      'edp30': { name: 'Nước hoa EDP 30ml', badge: 'edp30-theme', code: 'EDP30' },
-      'tea': { name: 'Các Loại Trà Thảo Mộc', badge: 'tea-theme', code: 'TEA' }
-    };
+    // Default Campaigns (Fallback if localStorage is empty)
+    const defaultCampaigns = [
+      { id: "ws", name: "Combo Workshop & Nước", code: "WS", color: "#e5b25d" },
+      { id: "e50", name: "Nước hoa Elixir 50ml", code: "E50", color: "#ca6a4b" },
+      { id: "edp30", name: "Nước hoa EDP 30ml", code: "EDP30", color: "#5f8dcd" },
+      { id: "tea", name: "Các Loại Trà Thảo Mộc", code: "TEA", color: "#89b057" }
+    ];
+
+    let campaigns = [];
+
+    function getCampaignInfo(campaignId) {
+      return campaigns.find(c => c.id === campaignId) || { name: campaignId, code: campaignId.toUpperCase(), color: '#5e826b' };
+    }
+
+    function hexToRgba(hex, alpha) {
+      if (!hex || hex.indexOf('#') !== 0) return `rgba(255, 255, 255, ${alpha})`;
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
 
     // Departments
     const DEPARTMENTS = [
@@ -450,6 +485,13 @@
     function loadData() {
       const storedTasks = localStorage.getItem('ncttx_tasks');
       const storedLogs = localStorage.getItem('ncttx_logs');
+      const storedCampaigns = localStorage.getItem('ncttx_campaigns');
+
+      if (storedCampaigns) {
+        campaigns = JSON.parse(storedCampaigns);
+      } else {
+        campaigns = [...defaultCampaigns];
+      }
 
       if (storedTasks) {
         tasks = JSON.parse(storedTasks);
@@ -464,6 +506,16 @@
           { type: 'info', text: 'Hệ thống quản lý dự án hè khởi tạo thành công!', time: '08:30:00' },
           { type: 'add', text: 'Đã tải danh sách công việc chính thức từ Duy & Team Marketing.', time: '09:00:00' }
         ];
+      }
+    }
+
+    function translateStatus(status) {
+      switch (status) {
+        case 'todo': return 'Cần làm';
+        case 'in-progress': return 'Đang làm';
+        case 'review': return 'Kiểm duyệt';
+        case 'done': return 'Hoàn thành';
+        default: return status;
       }
     }
 
@@ -492,6 +544,7 @@
 
       renderDepartmentChart();
       renderProductChart();
+      renderTaskActivities();
       renderActivityLog();
     }
 
@@ -524,23 +577,93 @@
       if (!container) return;
       container.innerHTML = '';
 
-      Object.keys(PRODUCT_INFO).forEach(key => {
-        const pInfo = PRODUCT_INFO[key];
-        const prodTasks = tasks.filter(t => t.product === key);
+      campaigns.forEach(c => {
+        const prodTasks = tasks.filter(t => t.product === c.id);
         const total = prodTasks.length;
         const pct = tasks.length > 0 ? Math.round((total / tasks.length) * 100) : 0;
 
         const item = document.createElement('div');
         item.className = 'chart-bar-item';
         item.innerHTML = `
-          <div class="chart-label" title="${pInfo.name}">${pInfo.name}</div>
+          <div class="chart-label" title="${c.name}">${c.name}</div>
           <div class="chart-track">
-            <div class="chart-fill prod-fill-${key}" style="width: ${pct}%;"></div>
+            <div class="chart-fill" style="width: ${pct}%; background: ${c.color};"></div>
           </div>
           <div class="chart-value">${total} việc (${pct}%)</div>
         `;
         container.appendChild(item);
       });
+    }
+
+    function renderTaskActivities() {
+      const activeContainer = document.getElementById('active-tasks-container');
+      const completedContainer = document.getElementById('completed-tasks-container');
+
+      if (activeContainer) {
+        activeContainer.innerHTML = '';
+        const activeTasks = tasks.filter(t => t.status === 'in-progress' || t.status === 'review');
+        if (activeTasks.length === 0) {
+          activeContainer.innerHTML = '<p style="font-size:12px; color:var(--text-muted); text-align:center; padding:15px 0;">Không có nhiệm vụ nào đang triển khai.</p>';
+        } else {
+          // Sort by newest activity or title
+          activeTasks.slice(0, 5).forEach(task => {
+            activeContainer.appendChild(createTaskActivityRow(task));
+          });
+        }
+      }
+
+      if (completedContainer) {
+        completedContainer.innerHTML = '';
+        const completedTasks = tasks.filter(t => t.status === 'done');
+        if (completedTasks.length === 0) {
+          completedContainer.innerHTML = '<p style="font-size:12px; color:var(--text-muted); text-align:center; padding:15px 0;">Chưa có nhiệm vụ nào hoàn thành.</p>';
+        } else {
+          // Sort done tasks by name or newest
+          completedTasks.slice(0, 5).forEach(task => {
+            completedContainer.appendChild(createTaskActivityRow(task));
+          });
+        }
+      }
+    }
+
+    function createTaskActivityRow(task) {
+      const pInfo = getCampaignInfo(task.product);
+      const div = document.createElement('div');
+      div.className = 'activity-item';
+      div.style.display = 'flex';
+      div.style.justifyContent = 'space-between';
+      div.style.alignItems = 'center';
+      div.style.padding = '12px 0';
+      div.style.borderBottom = '1px solid var(--glass-border)';
+      
+      const badgeHtml = `
+        <span class="badge" style="background: ${hexToRgba(pInfo.color, 0.15)}; color: ${pInfo.color}; border: 1.5px solid ${pInfo.color}; font-size: 8.5px; border-radius: 4px; padding: 2px 6px;">
+          ${pInfo.code}
+        </span>
+      `;
+      
+      let metaText = `Ban ${task.dept}`;
+      if (task.owner) {
+        metaText += ` | 👤 ${task.owner}`;
+        if (task.supporter) metaText += ` + ${task.supporter}`;
+      }
+      if (task.endDate) {
+        metaText += ` | 📅 Hạn: ${task.endDate}`;
+      }
+
+      div.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:4px; text-align: left;">
+          <div style="font-weight: 500; font-size: 13.5px; color: var(--text-main);">${task.title}</div>
+          <div style="font-size: 11.5px; color: var(--text-muted);">${metaText}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          ${badgeHtml}
+          <span class="status-badge status-badge-${task.status === 'in-progress' ? 'progress' : task.status}" style="font-size:10px; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
+            ${translateStatus(task.status)}
+          </span>
+        </div>
+      `;
+      return div;
     }
 
     function renderActivityLog() {
@@ -553,14 +676,13 @@
         return;
       }
 
-      // Max 10 items in activity list
       const displayLogs = logs.slice(0, 10);
       displayLogs.forEach(log => {
         const item = document.createElement('div');
         item.className = `activity-item ${log.type}`;
         item.innerHTML = `
           <div class="activity-details">
-            <div>${log.text}</div>
+            <div style="text-align: left;">${log.text}</div>
             <div class="activity-time">${log.time}</div>
           </div>
         `;
