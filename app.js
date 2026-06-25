@@ -36,7 +36,8 @@ const DEPARTMENTS = [
   'Kinh doanh',
   'Pha chế',
   'Vấn đề chung',
-  'Truyền thông & MKT'
+  'Truyền thông & MKT',
+  'Phòng hệ thống'
 ];
 
 // Initial default data if LocalStorage is empty
@@ -694,16 +695,40 @@ function setupEventListeners() {
   const closeModalBtn = document.querySelector('.modal-close');
   const taskForm = document.getElementById('task-form');
 
-  addTaskBtn.addEventListener('click', () => {
-    editingTaskId = null;
-    document.getElementById('modal-title').innerText = 'Thêm Công Việc Mới';
-    taskForm.reset();
-    modal.classList.add('active');
+  if (addTaskBtn) {
+    addTaskBtn.addEventListener('click', () => {
+      editingTaskId = null;
+      document.getElementById('modal-title').innerText = 'Thêm Công Việc Mới';
+      taskForm.reset();
+      const statusSelect = document.getElementById('task-status');
+      if (statusSelect) statusSelect.disabled = false;
+      modal.classList.add('active');
+    });
+  }
+
+  // Kanban columns localized Add buttons
+  const colAddButtons = document.querySelectorAll('.column-add-btn');
+  colAddButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      editingTaskId = null;
+      document.getElementById('modal-title').innerText = 'Thêm Công Việc Mới';
+      taskForm.reset();
+      
+      const status = btn.getAttribute('data-status');
+      const statusSelect = document.getElementById('task-status');
+      if (statusSelect) {
+        statusSelect.value = status;
+        statusSelect.disabled = true; // Lock status
+      }
+      modal.classList.add('active');
+    });
   });
 
   const closeModal = () => {
     modal.classList.remove('active');
     editingTaskId = null;
+    const statusSelect = document.getElementById('task-status');
+    if (statusSelect) statusSelect.disabled = false;
   };
 
   closeModalBtn.addEventListener('click', closeModal);
@@ -1177,7 +1202,13 @@ function openEditModal(task) {
   document.getElementById('task-dept').value = task.dept;
   document.getElementById('task-product').value = task.product;
   document.getElementById('task-priority').value = task.priority;
-  document.getElementById('task-status').value = task.status;
+  
+  const statusSelect = document.getElementById('task-status');
+  if (statusSelect) {
+    statusSelect.value = task.status;
+    statusSelect.disabled = false; // Enable status editing
+  }
+  
   document.getElementById('task-owner').value = task.owner || '';
   document.getElementById('task-supporter').value = task.supporter || '';
   document.getElementById('task-start-date').value = dateToHtml(task.startDate);
@@ -1301,9 +1332,9 @@ function renderDepartmentChart() {
   });
 }
 
-// Draw Product Line Distribution Chart
+// Draw Campaign-wise detailed reports with task lists
 function renderProductChart() {
-  const container = document.getElementById('chart-product-container');
+  const container = document.getElementById('campaign-report-list-container');
   if (!container) return;
 
   container.innerHTML = '';
@@ -1311,18 +1342,78 @@ function renderProductChart() {
   campaigns.forEach(c => {
     const prodTasks = tasks.filter(t => t.product === c.id);
     const total = prodTasks.length;
-    const pct = tasks.length > 0 ? Math.round((total / tasks.length) * 100) : 0;
+    const completed = prodTasks.filter(t => t.status === 'done').length;
+    const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-    const item = document.createElement('div');
-    item.className = 'chart-bar-item';
-    item.innerHTML = `
-      <div class="chart-label" title="${c.name}">${c.name}</div>
-      <div class="chart-track">
-        <div class="chart-fill" style="width: ${pct}%; background: ${c.color};"></div>
+    const card = document.createElement('div');
+    card.className = 'campaign-report-card';
+    card.style.borderLeft = `4px solid ${c.color}`;
+
+    // Header with name & completion %
+    const header = document.createElement('div');
+    header.className = 'campaign-report-header';
+    header.innerHTML = `
+      <div class="campaign-report-title">
+        <span class="badge" style="background: ${hexToRgba(c.color, 0.15)}; color: ${c.color}; border: 1.5px solid ${c.color};">${c.code}</span>
+        ${c.name}
       </div>
-      <div class="chart-value">${total} việc (${pct}%)</div>
+      <div class="campaign-report-pct">${completed}/${total} việc (${pct}%)</div>
     `;
-    container.appendChild(item);
+
+    // Progress bar
+    const barBg = document.createElement('div');
+    barBg.className = 'campaign-report-bar-bg';
+    barBg.innerHTML = `
+      <div class="campaign-report-bar-fill" style="width: ${pct}%; background: ${c.color};"></div>
+    `;
+
+    // Task list
+    const tasksDiv = document.createElement('div');
+    tasksDiv.className = 'campaign-report-tasks';
+
+    if (prodTasks.length === 0) {
+      tasksDiv.innerHTML = `<p style="font-size:12px; color:var(--text-muted); padding: 5px 0; text-align:center; font-style:italic;">Chưa có công việc nào cho chiến dịch này.</p>`;
+    } else {
+      // Sort tasks: Active first, Done last
+      const sortedTasks = [...prodTasks].sort((a, b) => {
+        if ((a.status === 'done') !== (b.status === 'done')) {
+          return a.status === 'done' ? 1 : -1;
+        }
+        return a.title.localeCompare(b.title);
+      });
+
+      sortedTasks.forEach(task => {
+        const item = document.createElement('div');
+        item.className = 'campaign-task-item';
+        
+        let metaText = `Ban ${task.dept}`;
+        if (task.owner) {
+          metaText += ` | 👤 ${task.owner}`;
+          if (task.supporter) metaText += ` + ${task.supporter}`;
+        }
+        if (task.endDate) {
+          metaText += ` | 📅 Hạn: ${task.endDate}`;
+        }
+
+        item.innerHTML = `
+          <div class="campaign-task-info">
+            <div class="campaign-task-title" style="${task.status === 'done' ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${task.title}</div>
+            <div class="campaign-task-meta">${metaText}</div>
+          </div>
+          <div class="campaign-task-status">
+            <span class="status-badge status-badge-${task.status === 'in-progress' ? 'progress' : task.status}" style="font-size:10px; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
+              ${translateStatus(task.status)}
+            </span>
+          </div>
+        `;
+        tasksDiv.appendChild(item);
+      });
+    }
+
+    card.appendChild(header);
+    card.appendChild(barBg);
+    card.appendChild(tasksDiv);
+    container.appendChild(card);
   });
 }
 

@@ -203,6 +203,7 @@
               <option value="Pha chế">Ban Pha chế</option>
               <option value="Vấn đề chung">Vấn đề chung</option>
               <option value="Truyền thông & MKT">Ban Truyền thông & MKT</option>
+              <option value="Phòng hệ thống">Phòng hệ thống</option>
             </select>
 
             <select class="filter-select" id="filter-product">
@@ -210,7 +211,7 @@
             </select>
           </div>
 
-          <button class="primary-btn" id="btn-add-task">
+          <button class="primary-btn" id="btn-add-task" style="display: none;">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
               <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
             </svg>
@@ -233,6 +234,12 @@
             <div class="column-cards-container" id="col-todo-cards">
               <!-- Cards dynamically inserted -->
             </div>
+            <button class="column-add-btn" data-status="todo">
+              <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+              </svg>
+              Thêm công việc
+            </button>
           </div>
 
           <!-- Column 2: In Progress -->
@@ -247,6 +254,12 @@
             <div class="column-cards-container" id="col-progress-cards">
               <!-- Cards dynamically inserted -->
             </div>
+            <button class="column-add-btn" data-status="in-progress">
+              <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+              </svg>
+              Thêm công việc
+            </button>
           </div>
 
           <!-- Column 3: Review -->
@@ -261,6 +274,12 @@
             <div class="column-cards-container" id="col-review-cards">
               <!-- Cards dynamically inserted -->
             </div>
+            <button class="column-add-btn" data-status="review">
+              <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+              </svg>
+              Thêm công việc
+            </button>
           </div>
 
           <!-- Column 4: Done -->
@@ -275,6 +294,12 @@
             <div class="column-cards-container" id="col-done-cards">
               <!-- Cards dynamically inserted -->
             </div>
+            <button class="column-add-btn" data-status="done">
+              <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+              </svg>
+              Thêm công việc
+            </button>
           </div>
 
         </div>
@@ -338,18 +363,18 @@
           <!-- Right: Detailed charts and Activity logs -->
           <div class="report-details-panel">
             
-            <!-- Dept Completion chart -->
+            <!-- Campaign-wise reports -->
             <div class="report-card">
-              <h3 class="section-title">Tiến độ theo Phòng Ban</h3>
-              <div class="chart-container horizontal-bar-chart" id="chart-dept-container">
-                <!-- Bars dynamic -->
+              <h3 class="section-title">Tiến độ theo Chiến dịch</h3>
+              <div class="campaign-report-list" id="campaign-report-list-container">
+                <!-- Dynamically populated by JS -->
               </div>
             </div>
 
-            <!-- Product distribution chart -->
+            <!-- Dept Completion chart (moved below) -->
             <div class="report-card">
-              <h3 class="section-title">Phân bổ theo Dòng Sản Phẩm</h3>
-              <div class="chart-container horizontal-bar-chart" id="chart-product-container">
+              <h3 class="section-title">Tiến độ theo Phòng Ban</h3>
+              <div class="chart-container horizontal-bar-chart" id="chart-dept-container">
                 <!-- Bars dynamic -->
               </div>
             </div>
@@ -407,6 +432,7 @@
               <option value="Pha chế">Ban Pha chế</option>
               <option value="Vấn đề chung">Vấn đề chung</option>
               <option value="Truyền thông & MKT">Ban Truyền thông & MKT</option>
+              <option value="Phòng hệ thống">Phòng hệ thống</option>
             </select>
           </div>
 

@@ -169,6 +169,16 @@
 
       <!-- Right Column: details & charts -->
       <div class="report-details-panel">
+        
+        <!-- Campaign-wise reports -->
+        <div class="report-card">
+          <h3 class="section-title">Tiến độ theo Chiến dịch</h3>
+          <div class="campaign-report-list" id="campaign-report-list-container">
+            <!-- Dynamic -->
+          </div>
+        </div>
+
+        <!-- Dept Completion chart (moved below) -->
         <div class="report-card">
           <h3 class="section-title">Tiến độ theo Phòng Ban</h3>
           <div class="chart-container horizontal-bar-chart" id="chart-dept-container">
@@ -176,35 +186,14 @@
           </div>
         </div>
 
-        <div class="report-card">
-          <h3 class="section-title">Phân bổ theo Dòng Chiến dịch</h3>
-          <div class="chart-container horizontal-bar-chart" id="chart-product-container">
-            <!-- Dynamic -->
-          </div>
-        </div>
-
-        <!-- NEW: Active Tasks list -->
-        <div class="report-card">
-          <h3 class="section-title">Nhiệm vụ đang triển khai (Đang làm / Kiểm duyệt)</h3>
-          <div class="task-activity-list" id="active-tasks-container">
-            <!-- Dynamic -->
-          </div>
-        </div>
-
-        <!-- NEW: Recently Completed Tasks list -->
-        <div class="report-card">
-          <h3 class="section-title">Nhiệm vụ mới hoàn thành</h3>
-          <div class="task-activity-list" id="completed-tasks-container">
-            <!-- Dynamic -->
-          </div>
-        </div>
-
+        <!-- Recent Activity list -->
         <div class="report-card">
           <h3 class="section-title">Nhật ký hoạt động gần đây</h3>
           <div class="activity-list" id="activity-list-container">
             <!-- Dynamic -->
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -238,7 +227,8 @@
       'Kinh doanh',
       'Pha chế',
       'Vấn đề chung',
-      'Truyền thông & MKT'
+      'Truyền thông & MKT',
+      'Phòng hệ thống'
     ];
 
     // Mapped Default Tasks (Fallback if localStorage is empty)
@@ -544,7 +534,6 @@
 
       renderDepartmentChart();
       renderProductChart();
-      renderTaskActivities();
       renderActivityLog();
     }
 
@@ -573,97 +562,85 @@
     }
 
     function renderProductChart() {
-      const container = document.getElementById('chart-product-container');
+      const container = document.getElementById('campaign-report-list-container');
       if (!container) return;
       container.innerHTML = '';
 
       campaigns.forEach(c => {
         const prodTasks = tasks.filter(t => t.product === c.id);
         const total = prodTasks.length;
-        const pct = tasks.length > 0 ? Math.round((total / tasks.length) * 100) : 0;
+        const completed = prodTasks.filter(t => t.status === 'done').length;
+        const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-        const item = document.createElement('div');
-        item.className = 'chart-bar-item';
-        item.innerHTML = `
-          <div class="chart-label" title="${c.name}">${c.name}</div>
-          <div class="chart-track">
-            <div class="chart-fill" style="width: ${pct}%; background: ${c.color};"></div>
+        const card = document.createElement('div');
+        card.className = 'campaign-report-card';
+        card.style.borderLeft = `4px solid ${c.color}`;
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'campaign-report-header';
+        header.innerHTML = `
+          <div class="campaign-report-title">
+            <span class="badge" style="background: ${hexToRgba(c.color, 0.15)}; color: ${c.color}; border: 1.5px solid ${c.color};">${c.code}</span>
+            ${c.name}
           </div>
-          <div class="chart-value">${total} việc (${pct}%)</div>
+          <div class="campaign-report-pct">${completed}/${total} việc (${pct}%)</div>
         `;
-        container.appendChild(item);
+
+        // Progress bar
+        const barBg = document.createElement('div');
+        barBg.className = 'campaign-report-bar-bg';
+        barBg.innerHTML = `
+          <div class="campaign-report-bar-fill" style="width: ${pct}%; background: ${c.color};"></div>
+        `;
+
+        // Tasks list
+        const tasksDiv = document.createElement('div');
+        tasksDiv.className = 'campaign-report-tasks';
+
+        if (prodTasks.length === 0) {
+          tasksDiv.innerHTML = `<p style="font-size:12px; color:var(--text-muted); padding: 5px 0; text-align:center; font-style:italic;">Chưa có công việc nào cho chiến dịch này.</p>`;
+        } else {
+          const sortedTasks = [...prodTasks].sort((a, b) => {
+            if ((a.status === 'done') !== (b.status === 'done')) {
+              return a.status === 'done' ? 1 : -1;
+            }
+            return a.title.localeCompare(b.title);
+          });
+
+          sortedTasks.forEach(task => {
+            const item = document.createElement('div');
+            item.className = 'campaign-task-item';
+            
+            let metaText = `Ban ${task.dept}`;
+            if (task.owner) {
+              metaText += ` | 👤 ${task.owner}`;
+              if (task.supporter) metaText += ` + ${task.supporter}`;
+            }
+            if (task.endDate) {
+              metaText += ` | 📅 Hạn: ${task.endDate}`;
+            }
+
+            item.innerHTML = `
+              <div class="campaign-task-info">
+                <div class="campaign-task-title" style="${task.status === 'done' ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${task.title}</div>
+                <div class="campaign-task-meta">${metaText}</div>
+              </div>
+              <div class="campaign-task-status">
+                <span class="status-badge status-badge-${task.status === 'in-progress' ? 'progress' : task.status}" style="font-size:10px; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
+                  ${translateStatus(task.status)}
+                </span>
+              </div>
+            `;
+            tasksDiv.appendChild(item);
+          });
+        }
+
+        card.appendChild(header);
+        card.appendChild(barBg);
+        card.appendChild(tasksDiv);
+        container.appendChild(card);
       });
-    }
-
-    function renderTaskActivities() {
-      const activeContainer = document.getElementById('active-tasks-container');
-      const completedContainer = document.getElementById('completed-tasks-container');
-
-      if (activeContainer) {
-        activeContainer.innerHTML = '';
-        const activeTasks = tasks.filter(t => t.status === 'in-progress' || t.status === 'review');
-        if (activeTasks.length === 0) {
-          activeContainer.innerHTML = '<p style="font-size:12px; color:var(--text-muted); text-align:center; padding:15px 0;">Không có nhiệm vụ nào đang triển khai.</p>';
-        } else {
-          // Sort by newest activity or title
-          activeTasks.slice(0, 5).forEach(task => {
-            activeContainer.appendChild(createTaskActivityRow(task));
-          });
-        }
-      }
-
-      if (completedContainer) {
-        completedContainer.innerHTML = '';
-        const completedTasks = tasks.filter(t => t.status === 'done');
-        if (completedTasks.length === 0) {
-          completedContainer.innerHTML = '<p style="font-size:12px; color:var(--text-muted); text-align:center; padding:15px 0;">Chưa có nhiệm vụ nào hoàn thành.</p>';
-        } else {
-          // Sort done tasks by name or newest
-          completedTasks.slice(0, 5).forEach(task => {
-            completedContainer.appendChild(createTaskActivityRow(task));
-          });
-        }
-      }
-    }
-
-    function createTaskActivityRow(task) {
-      const pInfo = getCampaignInfo(task.product);
-      const div = document.createElement('div');
-      div.className = 'activity-item';
-      div.style.display = 'flex';
-      div.style.justifyContent = 'space-between';
-      div.style.alignItems = 'center';
-      div.style.padding = '12px 0';
-      div.style.borderBottom = '1px solid var(--glass-border)';
-      
-      const badgeHtml = `
-        <span class="badge" style="background: ${hexToRgba(pInfo.color, 0.15)}; color: ${pInfo.color}; border: 1.5px solid ${pInfo.color}; font-size: 8.5px; border-radius: 4px; padding: 2px 6px;">
-          ${pInfo.code}
-        </span>
-      `;
-      
-      let metaText = `Ban ${task.dept}`;
-      if (task.owner) {
-        metaText += ` | 👤 ${task.owner}`;
-        if (task.supporter) metaText += ` + ${task.supporter}`;
-      }
-      if (task.endDate) {
-        metaText += ` | 📅 Hạn: ${task.endDate}`;
-      }
-
-      div.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:4px; text-align: left;">
-          <div style="font-weight: 500; font-size: 13.5px; color: var(--text-main);">${task.title}</div>
-          <div style="font-size: 11.5px; color: var(--text-muted);">${metaText}</div>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          ${badgeHtml}
-          <span class="status-badge status-badge-${task.status === 'in-progress' ? 'progress' : task.status}" style="font-size:10px; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
-            ${translateStatus(task.status)}
-          </span>
-        </div>
-      `;
-      return div;
     }
 
     function renderActivityLog() {
