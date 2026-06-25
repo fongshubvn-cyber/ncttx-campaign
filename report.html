@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Trang báo cáo tiến độ chiến dịch hè của Quán của Thời Thanh Xuân.">
+  <title>Báo cáo Tiến độ - Campaign Tracking & Report</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Standalone report page styling adjustments */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+    }
+    .report-standalone-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius-lg);
+      padding: 24px 30px;
+      backdrop-filter: blur(20px);
+    }
+    .report-brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .report-logo {
+      height: 48px;
+      width: auto;
+    }
+    .report-title-group h1 {
+      font-size: 24px;
+      font-family: 'Playfair Display', serif;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .report-title-group p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .refresh-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(202, 106, 75, 0.15);
+      border: 1px solid rgba(202, 106, 75, 0.25);
+      color: var(--terracotta);
+      border-radius: 30px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 10px;
+      }
+      .report-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px;
+      }
+      .refresh-badge {
+        align-self: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SVG Gradient definition for Circular Progress Ring -->
+  <svg style="width:0; height:0; position:absolute;" aria-hidden="true">
+    <defs>
+      <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#b7c9a8" />
+        <stop offset="100%" stop-color="#ca6a4b" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="report-standalone-container">
+    <header class="report-header">
+      <div class="report-brand">
+        <img src="logo.png" alt="Thời Thanh Xuân Logo" class="report-logo">
+        <div class="report-title-group">
+          <h1>Báo cáo Tiến độ Chiến dịch</h1>
+          <p>Campaign Tracking & Report - Quán của Thời Thanh Xuân</p>
+        </div>
+      </div>
+      <div class="refresh-badge">
+        <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" style="margin-top: 1px;">
+          <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+          <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+        </svg>
+        <span>Tự động cập nhật</span>
+      </div>
+    </header>
+
+    <div class="report-grid">
+      <!-- Left Column: Circular stats -->
+      <div class="report-summary-card">
+        <h3 class="section-title">Tiến độ tổng thể</h3>
+        
+        <div class="progress-ring-container">
+          <svg width="180" height="180">
+            <circle class="progress-ring-circle-bg" cx="90" cy="90" r="80" />
+            <circle class="progress-ring-circle" id="progress-ring-circle-element" cx="90" cy="90" r="80" />
+          </svg>
+          <div class="progress-percentage">
+            <span class="progress-pct-val" id="report-pct-text">0%</span>
+            <span class="progress-pct-lbl">Hoàn tất</span>
+          </div>
+        </div>
+
+        <div class="summary-stats-details" style="width: 100%;">
+          <div class="summary-stat-row" style="display:flex; justify-content:space-between; margin: 8px 0; font-size:13px; color:var(--text-muted);">
+            <span>
+              <span class="column-dot dot-todo" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#9bb2a0; margin-right:6px;"></span>
+              Cần làm:
+            </span>
+            <strong id="lbl-report-todo" style="color:var(--text-main);">0</strong>
+          </div>
+          <div class="summary-stat-row" style="display:flex; justify-content:space-between; margin: 8px 0; font-size:13px; color:var(--text-muted);">
+            <span>
+              <span class="column-dot dot-progress" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#b7c9a8; margin-right:6px;"></span>
+              Đang làm:
+            </span>
+            <strong id="lbl-report-progress" style="color:var(--text-main);">0</strong>
+          </div>
+          <div class="summary-stat-row" style="display:flex; justify-content:space-between; margin: 8px 0; font-size:13px; color:var(--text-muted);">
+            <span>
+              <span class="column-dot dot-review" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ca6a4b; margin-right:6px;"></span>
+              Kiểm duyệt:
+            </span>
+            <strong id="lbl-report-review" style="color:var(--text-main);">0</strong>
+          </div>
+          <div class="summary-stat-row" style="display:flex; justify-content:space-between; margin: 8px 0; font-size:13px; color:var(--text-muted);">
+            <span>
+              <span class="column-dot dot-done" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#5e826b; margin-right:6px;"></span>
+              Hoàn thành:
+            </span>
+            <strong id="lbl-report-done" style="color:var(--text-main);">0</strong>
+          </div>
+          <div class="summary-stat-row" style="display:flex; justify-content:space-between; margin: 8px 0; font-size:13px; color:var(--text-muted); border-top:1px dashed var(--glass-border); padding-top:8px; margin-top:4px;">
+            <span>Tổng số việc:</span>
+            <strong id="lbl-report-total" style="color:var(--text-main);">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: details & charts -->
+      <div class="report-details-panel">
+        <div class="report-card">
+          <h3 class="section-title">Tiến độ theo Phòng Ban</h3>
+          <div class="chart-container horizontal-bar-chart" id="chart-dept-container">
+            <!-- Dynamic -->
+          </div>
+        </div>
+
+        <div class="report-card">
+          <h3 class="section-title">Phân bổ theo Dòng Sản Phẩm</h3>
+          <div class="chart-container horizontal-bar-chart" id="chart-product-container">
+            <!-- Dynamic -->
+          </div>
+        </div>
+
+        <div class="report-card">
+          <h3 class="section-title">Nhật ký hoạt động gần đây</h3>
+          <div class="activity-list" id="activity-list-container">
+            <!-- Dynamic -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Product Mapping
+    const PRODUCT_INFO = {
+      'ws': { name: 'Combo Workshop & Nước', badge: 'ws-theme', code: 'WS' },
+      'e50': { name: 'Nước hoa Elixir 50ml', badge: 'e50-theme', code: 'E50' },
+      'edp30': { name: 'Nước hoa EDP 30ml', badge: 'edp30-theme', code: 'EDP30' },
+      'tea': { name: 'Các Loại Trà Thảo Mộc', badge: 'tea-theme', code: 'TEA' }
+    };
+
+    // Departments
+    const DEPARTMENTS = [
+      'Bán hàng',
+      'Kinh doanh',
+      'Pha chế',
+      'Vấn đề chung',
+      'Truyền thông & MKT'
+    ];
+
+    // Mapped Default Tasks (Fallback if localStorage is empty)
+    const defaultTasks = [
+      {
+        id: "duy1",
+        title: "Workshop nước hoa",
+        desc: "Setup, tạo quy trình, vận hành",
+        dept: "Bán hàng",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Trọng Duy",
+        supporter: "Thuỳ Dương",
+        startDate: "19/06/2026",
+        endDate: "30/06/2026"
+      },
+      {
+        id: "duy2",
+        title: "Xử lý thủ tục đối soát hàng hoá Thời Thanh Xuân và 12 Trương Công Định",
+        desc: "Thực hiện đối soát số lượng và doanh thu hàng hoá giữa các chi nhánh.",
+        dept: "Kinh doanh",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Trọng Duy",
+        supporter: "",
+        startDate: "19/06/2026",
+        endDate: "20/06/2026"
+      },
+      {
+        id: "duy3",
+        title: "Chương trình bán hàng tháng 7/2026",
+        desc: "Lên kế hoạch và triển khai chương trình ưu đãi bán hàng cho tháng 7.",
+        dept: "Bán hàng",
+        status: "todo",
+        product: "ws",
+        priority: "medium",
+        owner: "Nguyễn Trọng Duy",
+        supporter: "Thuỳ Dương",
+        startDate: "20/06/2026",
+        endDate: "25/06/2026"
+      },
+      {
+        id: "duy4",
+        title: "Lên kế hoạch kinh doanh offline xử lý tồn kho 3 mã sản phẩm: Lá bạc, Trà, Nước hoa Đà Lạt bên hiên nhà",
+        desc: "Tập trung giải phóng hàng tồn kho cho 3 sản phẩm chủ lực qua kênh trực tiếp.",
+        dept: "Bán hàng",
+        status: "todo",
+        product: "tea",
+        priority: "high",
+        owner: "Nguyễn Trọng Duy",
+        supporter: "Thuỳ Dương",
+        startDate: "20/06/2026",
+        endDate: "21/06/2026"
+      },
+      {
+        id: "duy5",
+        title: "Điều chỉnh mã hàng kiotviet cho toàn hệ thống: Thời Thanh Xuân, 12 Trương Công Định",
+        desc: "Cập nhật và chuẩn hoá mã vạch, thông tin sản phẩm trên phần mềm KiotViet.",
+        dept: "Bán hàng",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Trọng Duy",
+        supporter: "",
+        startDate: "21/06/2026",
+        endDate: "21/06/2026"
+      },
+      {
+        id: "duy6",
+        title: "Tuyển dụng đủ: 3 nhân sự bán hàng, 1 nhân sự workshop nước hoa, 1 nhân sự vệ sinh",
+        desc: "Lên tin tuyển dụng, phỏng vấn và tiếp nhận nhân sự mới phục vụ mùa hè.",
+        dept: "Vấn đề chung",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Trọng Duy",
+        supporter: "Nguyễn Hoàng Phi",
+        startDate: "21/06/2026",
+        endDate: "25/06/2026"
+      },
+      {
+        id: "duy7",
+        title: "Ra mắt món bánh mới",
+        desc: "Hoàn thiện công thức, chuẩn bị nguyên liệu và chạy thử món bánh mới tại quầy bar.",
+        dept: "Pha chế",
+        status: "todo",
+        product: "tea",
+        priority: "high",
+        owner: "Nguyễn Trọng Duy",
+        supporter: "Thuỳ Dương",
+        startDate: "22/06/2026",
+        endDate: "23/06/2026"
+      },
+      {
+        id: "duy8",
+        title: "Bắt đầu kế hoạch kinh doanh offline xử lý tồn kho 3 mã sản phẩm: Lá bạc, Trà, Nước hoa Đà Lạt bên hiên nhà",
+        desc: "Chính thức triển khai bán hàng offline, đẩy mạnh tiếp thị trực tiếp tại quán.",
+        dept: "Bán hàng",
+        status: "todo",
+        product: "tea",
+        priority: "high",
+        owner: "Nguyễn Trọng Duy",
+        supporter: "Thuỳ Dương",
+        startDate: "22/06/2026",
+        endDate: "30/06/2026"
+      },
+      {
+        id: "mkt1",
+        title: "Content Giới Thiệu Give Me A Little Time",
+        desc: "Số lượng: 5 bài content giới thiệu chương trình ý nghĩa Give Me A Little Time.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "20/06/2026",
+        endDate: "25/06/2026"
+      },
+      {
+        id: "mkt2",
+        title: "Content Giới Thiệu Workshop 200k",
+        desc: "Số lượng: 10 bài content giới thiệu chi tiết về Workshop tự làm sản phẩm trị giá 200k.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "20/06/2026",
+        endDate: "25/06/2026"
+      },
+      {
+        id: "mkt3",
+        title: "Content Giới Thiệu Set Trà 100k",
+        desc: "Số lượng: 5 bài content giới thiệu set trà quà tặng mang đậm phong vị Đà Lạt.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "tea",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "20/06/2026",
+        endDate: "25/06/2026"
+      },
+      {
+        id: "mkt4",
+        title: "Content Bán Trà/Bánh Cookie",
+        desc: "Số lượng: 10 bài content đẩy mạnh bán chéo set trà thơm ấm và bánh cookie giòn ngon.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "tea",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "20/06/2026",
+        endDate: "25/06/2026"
+      },
+      {
+        id: "mkt5",
+        title: "Content Bán Nước Hoa ĐLNBHN",
+        desc: "Số lượng: 10 bài content giới thiệu và đẩy bán dòng nước hoa Đà Lạt Bên Hiên Nhà.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "e50",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "21/06/2026",
+        endDate: "30/06/2026"
+      },
+      {
+        id: "mkt6",
+        title: "Buổi Live Stream Các Hoạt Động Tại Quán",
+        desc: "Số lượng: 3 buổi livestream chia sẻ không gian bình yên và các hoạt động thường nhật ấm cúng tại quán.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "21/06/2026",
+        endDate: "30/06/2026"
+      },
+      {
+        id: "mkt7",
+        title: "Buổi Live Stream Bán Hàng",
+        desc: "Số lượng: 10 buổi livestream giới thiệu và thúc đẩy doanh số bán các sản phẩm trực tiếp.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "e50",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "22/06/2026",
+        endDate: "30/06/2026"
+      },
+      {
+        id: "mkt8",
+        title: "Content Giới Thiệu Workshop Khách Đoàn",
+        desc: "Số lượng: 5 bài viết giới thiệu gói workshop thiết kế riêng cho các đoàn khách du lịch và doanh nghiệp.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "22/06/2026",
+        endDate: "30/06/2026"
+      },
+      {
+        id: "mkt9",
+        title: "Content Giới Thiệu CT 1000 Chiếc Ô",
+        desc: "Số lượng: 3 bài viết giới thiệu chương trình tặng/mượn 1000 chiếc ô đầy ý nghĩa tại Đà Lạt.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "22/06/2026",
+        endDate: "30/06/2026"
+      },
+      {
+        id: "mkt10",
+        title: "Content giảm 50%hs-sv",
+        desc: "Số lượng: 5 bài truyền thông chương trình ưu đãi đặc biệt giảm 50% cho học sinh - sinh viên.",
+        dept: "Truyền thông & MKT",
+        status: "todo",
+        product: "ws",
+        priority: "high",
+        owner: "Nguyễn Hoàng Phi",
+        supporter: "Team Marketing",
+        startDate: "22/06/2026",
+        endDate: "30/06/2026"
+      }
+    ];
+
+    let tasks = [];
+    let logs = [];
+
+    function loadData() {
+      const storedTasks = localStorage.getItem('ncttx_tasks');
+      const storedLogs = localStorage.getItem('ncttx_logs');
+
+      if (storedTasks) {
+        tasks = JSON.parse(storedTasks);
+      } else {
+        tasks = [...defaultTasks];
+      }
+
+      if (storedLogs) {
+        logs = JSON.parse(storedLogs);
+      } else {
+        logs = [
+          { type: 'info', text: 'Hệ thống quản lý dự án hè khởi tạo thành công!', time: '08:30:00' },
+          { type: 'add', text: 'Đã tải danh sách công việc chính thức từ Duy & Team Marketing.', time: '09:00:00' }
+        ];
+      }
+    }
+
+    function renderReport() {
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.status === 'done').length;
+      const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+      // SVG Progress Ring
+      const circle = document.getElementById('progress-ring-circle-element');
+      if (circle) {
+        const radius = 80;
+        const circumference = 2 * Math.PI * radius;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        const offset = circumference - (rate / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+        document.getElementById('report-pct-text').innerText = `${rate}%`;
+      }
+
+      // Text metrics
+      document.getElementById('lbl-report-total').innerText = total;
+      document.getElementById('lbl-report-done').innerText = completed;
+      document.getElementById('lbl-report-progress').innerText = tasks.filter(t => t.status === 'in-progress').length;
+      document.getElementById('lbl-report-review').innerText = tasks.filter(t => t.status === 'review').length;
+      document.getElementById('lbl-report-todo').innerText = tasks.filter(t => t.status === 'todo').length;
+
+      renderDepartmentChart();
+      renderProductChart();
+      renderActivityLog();
+    }
+
+    function renderDepartmentChart() {
+      const container = document.getElementById('chart-dept-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      DEPARTMENTS.forEach(dept => {
+        const deptTasks = tasks.filter(t => t.dept === dept);
+        const total = deptTasks.length;
+        const completed = deptTasks.filter(t => t.status === 'done').length;
+        const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        const item = document.createElement('div');
+        item.className = 'chart-bar-item';
+        item.innerHTML = `
+          <div class="chart-label" title="${dept}">${dept}</div>
+          <div class="chart-track">
+            <div class="chart-fill dept-fill" style="width: ${pct}%;"></div>
+          </div>
+          <div class="chart-value">${completed}/${total} (${pct}%)</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function renderProductChart() {
+      const container = document.getElementById('chart-product-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      Object.keys(PRODUCT_INFO).forEach(key => {
+        const pInfo = PRODUCT_INFO[key];
+        const prodTasks = tasks.filter(t => t.product === key);
+        const total = prodTasks.length;
+        const pct = tasks.length > 0 ? Math.round((total / tasks.length) * 100) : 0;
+
+        const item = document.createElement('div');
+        item.className = 'chart-bar-item';
+        item.innerHTML = `
+          <div class="chart-label" title="${pInfo.name}">${pInfo.name}</div>
+          <div class="chart-track">
+            <div class="chart-fill prod-fill-${key}" style="width: ${pct}%;"></div>
+          </div>
+          <div class="chart-value">${total} việc (${pct}%)</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function renderActivityLog() {
+      const container = document.getElementById('activity-list-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (logs.length === 0) {
+        container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center; padding: 20px 0;">Chưa có hoạt động nào được ghi nhận.</p>`;
+        return;
+      }
+
+      // Max 10 items in activity list
+      const displayLogs = logs.slice(0, 10);
+      displayLogs.forEach(log => {
+        const item = document.createElement('div');
+        item.className = `activity-item ${log.type}`;
+        item.innerHTML = `
+          <div class="activity-details">
+            <div>${log.text}</div>
+            <div class="activity-time">${log.time}</div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      renderReport();
+      
+      // Auto reload data every 5 seconds
+      setInterval(() => {
+        loadData();
+        renderReport();
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
