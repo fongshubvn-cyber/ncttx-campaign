@@ -702,6 +702,15 @@ function setupEventListeners() {
       taskForm.reset();
       const statusSelect = document.getElementById('task-status');
       if (statusSelect) statusSelect.disabled = false;
+      const productSelect = document.getElementById('task-product');
+      if (productSelect) {
+        if (currentProductFilter !== 'all') {
+          productSelect.value = currentProductFilter;
+          productSelect.disabled = true; // Lock campaign
+        } else {
+          productSelect.disabled = false; // Enable
+        }
+      }
       modal.classList.add('active');
     });
   }
@@ -720,6 +729,16 @@ function setupEventListeners() {
         statusSelect.value = status;
         statusSelect.disabled = true; // Lock status
       }
+      
+      const productSelect = document.getElementById('task-product');
+      if (productSelect) {
+        if (currentProductFilter !== 'all') {
+          productSelect.value = currentProductFilter;
+          productSelect.disabled = true; // Lock campaign
+        } else {
+          productSelect.disabled = false; // Enable
+        }
+      }
       modal.classList.add('active');
     });
   });
@@ -729,6 +748,8 @@ function setupEventListeners() {
     editingTaskId = null;
     const statusSelect = document.getElementById('task-status');
     if (statusSelect) statusSelect.disabled = false;
+    const productSelect = document.getElementById('task-product');
+    if (productSelect) productSelect.disabled = false;
   };
 
   closeModalBtn.addEventListener('click', closeModal);
@@ -1200,7 +1221,13 @@ function openEditModal(task) {
   document.getElementById('task-title').value = task.title;
   document.getElementById('task-desc').value = task.desc || '';
   document.getElementById('task-dept').value = task.dept;
-  document.getElementById('task-product').value = task.product;
+  
+  const productSelect = document.getElementById('task-product');
+  if (productSelect) {
+    productSelect.value = task.product;
+    productSelect.disabled = false; // Enable product editing
+  }
+  
   document.getElementById('task-priority').value = task.priority;
   
   const statusSelect = document.getElementById('task-status');
